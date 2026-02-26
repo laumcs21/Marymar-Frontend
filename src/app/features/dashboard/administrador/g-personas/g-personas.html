@@ -1,0 +1,226 @@
+<section class="flex-1 p-10 overflow-y-auto">
+
+  <div class="max-w-6xl mx-auto">
+
+    <div class="mb-10 flex justify-between items-start">
+      <div>
+      <h1 class="text-3xl font-bold text-primary">Gestión de Usuarios</h1>
+      <p class="text-slate-500 mt-2">
+        Administrar roles y cuentas del sistema
+      </p>
+    </div>
+
+    <button
+      (click)="abrirModal()"
+      class="flex items-center justify-center gap-2 rounded-lg h-11 px-6 bg-primary text-white text-sm font-bold shadow-sm hover:opacity-90 transition-opacity">
+      Agregar Usuario
+    </button>
+    </div>
+
+    <!-- TABLA (NO TOCADA) -->
+    <div class="bg-white rounded-xl border shadow-sm mt-6">
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+
+          <thead>
+            <tr class="border-b">
+              <th class="px-6 py-4 font-bold">Nombre</th>
+              <th class="px-6 py-4 font-bold">Email</th>
+              <th class="px-6 py-4 font-bold">Rol</th>
+              <th class="px-6 py-4 font-bold">Estado</th>
+              <th class="px-6 py-4 font-bold text-right">Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let usuario of usuarios" class="border-b">
+              <td class="px-6 py-4">{{ usuario.nombre }}</td>
+              <td class="px-6 py-4">{{ usuario.email }}</td>
+              <td class="px-6 py-4">{{ formatearRol(usuario.rol) }}</td>
+              <td class="px-6 py-4">
+                {{ usuario.activo ? 'Activo' : 'Inactivo' }}</td>
+
+                <td class="px-6 py-4 text-right">
+  <div class="flex justify-end items-center gap-4">
+
+    <!-- EDITAR -->
+    <button
+      (click)="editarUsuario(usuario)"
+      class="text-blue-600 hover:text-blue-800 transition-colors"
+      title="Editar usuario">
+      <span class="material-symbols-outlined text-[20px]">
+        edit
+      </span>
+    </button>
+
+    <!-- ELIMINAR -->
+    <button
+      (click)="eliminarUsuario(usuario.id)"
+      class="text-red-600 hover:text-red-800 transition-colors"
+      title="Eliminar usuario">
+      <span class="material-symbols-outlined text-[20px]">
+        delete
+      </span>
+    </button>
+
+  </div>
+</td>
+            </tr>
+          </tbody>
+
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div *ngIf="mostrarModal"
+       class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+
+    <div class="bg-white rounded-xl w-full max-w-lg p-6">
+
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold">
+          {{ modoEdicion ? 'Editar Usuario' : 'Create New User' }}
+        </h2>        
+        <button (click)="cerrarModal()">✖</button>
+      </div>
+
+      <form [formGroup]="form"
+            (ngSubmit)="guardarUsuario()"
+            class="space-y-4">
+
+        <!-- IDENTIFICACIÓN -->
+        <div>
+          <input formControlName="numeroIdentificacion"
+                 class="w-full border p-2 rounded"
+                 placeholder="Identification" />
+          <div *ngIf="form.get('numeroIdentificacion')?.touched && form.get('numeroIdentificacion')?.invalid"
+               class="text-red-500 text-sm mt-1">
+            Campo obligatorio
+            <span *ngIf="form.get('numeroIdentificacion')?.errors?.['duplicado']">Este número de identificación ya existe</span>
+          </div>
+        </div>
+
+        <!-- NOMBRE -->
+        <div>
+          <input formControlName="nombre"
+                 class="w-full border p-2 rounded"
+                 placeholder="Nombre completo" />
+          <div *ngIf="form.get('nombre')?.touched && form.get('nombre')?.invalid"
+               class="text-red-500 text-sm mt-1">
+            Campo obligatorio
+          </div>
+        </div>
+
+        <!-- EMAIL -->
+        <div>
+          <input formControlName="email"
+                 class="w-full border p-2 rounded"
+                 placeholder="Email" 
+                 autocomplete="off"/>
+          <div *ngIf="form.get('email')?.touched && form.get('email')?.invalid"
+               class="text-red-500 text-sm mt-1">
+            <span *ngIf="form.get('email')?.errors?.['required']">Correo obligatorio</span>
+            <span *ngIf="form.get('email')?.errors?.['email']">Formato inválido</span>
+            <span *ngIf="form.get('email')?.errors?.['duplicado']">Este correo ya está registrado</span>
+          </div>
+        </div>
+
+        <!-- CONTRASEÑA -->
+        <div *ngIf="!modoEdicion">
+          <input formControlName="contrasena"
+                 type="password"
+                 class="w-full border p-2 rounded"
+                 placeholder="Contraseña" 
+                 autocomplete="new-password"/>
+          <div *ngIf="form.get('contrasena')?.touched && form.get('contrasena')?.invalid"
+               class="text-red-500 text-sm mt-1">
+            <span *ngIf="form.get('contrasena')?.errors?.['required']">Obligatoria</span>
+            <span *ngIf="form.get('contrasena')?.errors?.['minlength']">Mínimo 6 caracteres</span>
+            <span *ngIf="form.get('contrasena')?.errors?.['pattern']">
+              Debe tener mayúscula, minúscula, número y símbolo
+            </span>
+          </div>
+        </div>
+
+        <!-- FECHA -->
+        <div>
+          <input formControlName="fechaNacimiento"
+                 type="date"
+                 class="w-full border p-2 rounded" />
+          <div *ngIf="form.get('fechaNacimiento')?.touched && form.get('fechaNacimiento')?.invalid"
+               class="text-red-500 text-sm mt-1">
+            Fecha obligatoria
+          </div>
+        </div>
+
+        <!-- ERROR EDAD -->
+        <div *ngIf="form.errors?.['menorEdadRol']"
+             class="text-red-500 text-sm">
+          Los administradores y meseros deben ser mayores de edad
+        </div>
+
+        <!-- ROL -->
+        <div>
+          <select formControlName="rol"
+                  class="w-full border p-2 rounded">
+            <option value="">Seleccione rol</option>
+            <option value="ADMINISTRADOR">Administrador</option>
+            <option value="MESERO">Mesero</option>
+            <option value="CLIENTE">Cliente</option>
+          </select>
+          <div *ngIf="form.get('rol')?.touched && form.get('rol')?.invalid"
+               class="text-red-500 text-sm mt-1">
+            Rol obligatorio
+          </div>
+        </div>
+
+        <!-- DIRECCIÓN DE ENVÍO -->
+            <div *ngIf="form.get('rol')?.value === 'CLIENTE'">
+              <input
+                formControlName="direccionEnvio"
+                class="w-full border p-2 rounded"
+                placeholder="Dirección de envío" />
+
+              <div *ngIf="form.get('direccionEnvio')?.touched && form.get('direccionEnvio')?.invalid"
+                  class="text-red-500 text-sm mt-1">
+                Dirección obligatoria para clientes
+              </div>
+            </div>
+
+        <!-- SALARIO -->
+        <div *ngIf="form.get('rol')?.value === 'ADMINISTRADOR' || form.get('rol')?.value === 'MESERO'">
+          <input formControlName="salario"
+                 type="number"
+                 min="0"
+                 class="w-full border p-2 rounded"
+                 placeholder="Salario" />
+          <div *ngIf="form.get('salario')?.touched && form.get('salario')?.invalid"
+               class="text-red-500 text-sm mt-1">
+            <span *ngIf="form.get('salario')?.errors?.['required']">Salario obligatorio</span>
+            <span *ngIf="form.get('salario')?.errors?.['min']">No puede ser negativo</span>
+          </div>
+        </div>
+
+        <div class="flex gap-3 pt-4">
+          <button type="button"
+                  (click)="cerrarModal()"
+                  class="flex-1 border p-2 rounded">
+            Cancelar
+          </button>
+
+          <button type="submit"
+                  [disabled]="form.invalid"
+                  class="flex-1 bg-primary text-white p-2 rounded disabled:opacity-50">
+            {{ modoEdicion ? 'Actualizar' : 'Save User' }}
+          </button>
+        </div>
+
+      </form>
+      <div *ngIf="serverError" class="text-red-600 text-sm mt-2">{{ serverError }}</div>
+    </div>
+  </div>
+</section>

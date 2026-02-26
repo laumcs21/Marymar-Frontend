@@ -1,0 +1,96 @@
+.login-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(to bottom, #184d5b, #1f5c6d);
+}
+
+.login-card {
+  background: #ffffff;
+  padding: 40px;
+  width: 380px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+.logo {
+  width: 80px;
+  margin-bottom: 10px;
+}
+
+h2 {
+  color: #184d5b;
+  margin-bottom: 5px;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+p {
+  color: #666;
+  margin-bottom: 15px;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+
+}
+
+.timer {
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #00a884;
+}
+
+.timer.expired {
+  color: #d63031;
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+}
+
+.code-input {
+  text-align: center;
+  letter-spacing: 5px;
+  font-size: 18px;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  background-color: #e66b2f; /* mismo naranja de tu login */
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-primary:hover {
+  background-color: #cf5d25;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+
+}
+
+.btn-primary:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+
+}
+
+.expired-message {
+  color: #d63031;
+  font-size: 13px;
+  margin-top: 10px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}

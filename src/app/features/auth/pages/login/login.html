@@ -1,0 +1,40 @@
+<div class="login-container">
+  <div class="login-card">
+
+    <img src="assets/logo.png" alt="Mar y Mar" class="logo">
+
+    <h2>Bienvenido a Mar y Mar</h2>
+    <p class="subtitle">Inicia sesión para continuar</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" autocomplete="off">
+
+       <input type="text" style="display:none">
+  <input type="password" style="display:none">
+
+      <input 
+        type="email" 
+        placeholder="Correo electrónico"
+        formControlName="email"
+        autocomplete="new-email"
+      >
+
+      <input 
+        type="password" 
+        placeholder="Contraseña"
+        formControlName="contrasena"
+        autocomplete="new-password"
+      >
+
+      <button type="submit" class="btn-primary">
+        Ingresar
+      </button>
+
+    </form>
+
+    <button class="google-btn" (click)="loginWithGoogle()">
+      <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" />
+      Continuar con Google
+    </button>
+
+  </div>
+</div>

@@ -1,1 +1,8 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --primary-blue: #0f3b4c;       /* azul oscuro del logo */
+  --secondary-blue: #1c5d75;     /* azul intermedio */
+  --accent-orange: #e46a2e;      /* naranja coral */
+  --soft-beige: #f4efe6;         /* fondo claro */
+  --text-dark: #1f1f1f;
+  --white: #ffffff;
+}
