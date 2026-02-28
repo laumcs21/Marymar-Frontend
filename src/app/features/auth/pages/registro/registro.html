@@ -1,0 +1,107 @@
+<div class="register-container">
+  <div class="register-card">
+
+    <img src="Logo.png" alt="Mar y Mar" class="logo">
+
+    <h2>Crear cuenta</h2>
+    <p class="subtitle">Regístrate para disfrutar de nuestros platos</p>
+
+    <form [formGroup]="form" (ngSubmit)="registrar()" autocomplete="off">
+        
+      <!-- Anti-autofill -->
+      <input type="text" style="display:none">
+      <input type="password" style="display:none">
+
+      <!-- Identificación -->
+      <input
+        formControlName="numeroIdentificacion"
+        placeholder="Identificación"
+        autocomplete="off"
+      />
+      <div class="error" *ngIf="form.get('numeroIdentificacion')?.touched && form.get('numeroIdentificacion')?.invalid">
+        Campo obligatorio
+        <span *ngIf="form.get('numeroIdentificacion')?.errors?.['duplicado']">
+          · Ya existe
+        </span>
+      </div>
+
+      <!-- Nombre -->
+      <input
+        formControlName="nombre"
+        placeholder="Nombre completo"
+        autocomplete="name"
+      />
+      <div class="error" *ngIf="form.get('nombre')?.touched && form.get('nombre')?.invalid">
+        Campo obligatorio
+      </div>
+
+      <!-- Email -->
+      <input
+        type="email"
+        formControlName="email"
+        placeholder="Correo electrónico"
+        autocomplete="new-email"
+      />
+      <div class="error" *ngIf="form.get('email')?.touched && form.get('email')?.invalid">
+        <span *ngIf="form.get('email')?.errors?.['required']">Correo obligatorio</span>
+        <span *ngIf="form.get('email')?.errors?.['email']">· Formato inválido</span>
+        <span *ngIf="form.get('email')?.errors?.['duplicado']">· Ya registrado</span>
+      </div>
+
+      <!-- Contraseña -->
+      <input
+        type="password"
+        formControlName="contrasena"
+        placeholder="Contraseña"
+        autocomplete="new-password"
+      />
+      <div class="error" *ngIf="form.get('contrasena')?.touched && form.get('contrasena')?.invalid">
+        <span *ngIf="form.get('contrasena')?.errors?.['required']">Obligatoria</span>
+        <span *ngIf="form.get('contrasena')?.errors?.['minlength']">· Mínimo 6 caracteres</span>
+        <span *ngIf="form.get('contrasena')?.errors?.['pattern']">
+          · Debe tener mayúscula, minúscula, número y símbolo
+        </span>
+      </div>
+
+      <!-- Fecha nacimiento -->
+      <input
+        type="date"
+        formControlName="fechaNacimiento"
+      />
+      <div class="error" *ngIf="form.get('fechaNacimiento')?.touched && form.get('fechaNacimiento')?.invalid">
+        Fecha obligatoria
+      </div>
+
+      <!-- Dirección obligatoria -->
+      <input
+        formControlName="direccionEnvio"
+        placeholder="Dirección de envío"
+        autocomplete="street-address"
+      />
+      <div class="error" *ngIf="form.get('direccionEnvio')?.touched && form.get('direccionEnvio')?.invalid">
+        Dirección obligatoria
+      </div>
+
+      <!-- Botón Registrar -->
+      <button type="submit" class="btn-primary" [disabled]="form.invalid">
+        Registrarse
+      </button>
+
+      <!-- Botón ir a login -->
+      <button type="button" class="btn-secondary" (click)="irALogin()">
+        ¿Ya tienes cuenta? Inicia sesión
+      </button>
+
+    </form>
+
+    <button class="google-btn" type="button" (click)="registroConGoogle()">
+      <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" />
+      Registrarse con Google
+    </button>
+
+    <div *ngIf="serverError" class="server-error">
+      {{ serverError }}
+    </div>
+
+  </div>
+</div>

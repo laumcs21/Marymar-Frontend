@@ -2,7 +2,7 @@
 
   <div class="login-card">
 
-    <img src="assets/logo.png" alt="Mar y Mar" class="logo" />
+    <img src="Logo.png" alt="Mar y Mar" class="logo" />
 
     <h2>Verificar Código</h2>
     <p>Ingresa el código enviado a tu correo</p>
@@ -17,7 +17,7 @@
         type="text"
         formControlName="codigo"
         maxlength="6"
-        placeholder="Código"
+        placeholder="Ingrese el código"
         class="input-field code-input"
         [disabled]="expired"
       />
@@ -55,9 +55,14 @@
     type="button"
     (click)="backToLogin()"
     style="
-      background: none;
+      width: 50%;
+      padding: 12px;
+      border-radius: 12px;
       border: none;
-      color: #1976d2;
+      background: #1c5d75;
+      font-weight: bold;
+      border: none;
+      color: #ffff;
       cursor: pointer;
       font-size: 14px;
     "

@@ -21,8 +21,10 @@
 }
 
 .logo {
-  width: 120px;
-  margin-bottom: 20px;
+  display: block;
+  width: 80px;
+  height: auto;
+  margin: 0 auto 20px auto;
 }
 
 h2 {
@@ -66,6 +68,20 @@ input:focus {
   transition: 0.3s;
 }
 
+.btn-secondary {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background-color: #70878F;
+  color: var(--white);
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-top: 15px;
+}
+
+
 .btn-primary:hover {
   background-color: #c9551e;
     font-family: Georgia, 'Times New Roman', Times, serif;
@@ -90,6 +106,7 @@ input:focus {
   gap: 10px;
   cursor: pointer;
   transition: 0.2s ease;
+  margin-top: 15px;
 }
 
 .google-btn:hover {

@@ -17,8 +17,10 @@
 }
 
 .logo {
+  display: block;
   width: 80px;
-  margin-bottom: 10px;
+  height: auto;
+  margin: 0 auto 20px auto;
 }
 
 h2 {
@@ -37,7 +39,7 @@ p {
 .timer {
   font-weight: bold;
   margin-bottom: 15px;
-  color: #00a884;
+  color: #1c5d75;
 }
 
 .timer.expired {
@@ -55,8 +57,9 @@ p {
 
 .code-input {
   text-align: center;
-  letter-spacing: 5px;
-  font-size: 18px;
+  letter-spacing: 3px;
+  font-size: 15px;
+  font-weight: 400;
 }
 
 .btn-primary {

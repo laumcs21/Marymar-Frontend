@@ -10,11 +10,17 @@ import { OAuthCallbackComponent } from './features/auth/pages/oauth-callback/oau
 import { adminGuard } from './core/guards/admin.guard';
 import { GPersonasComponent } from './features/dashboard/administrador/g-personas/g-personas';
 import { GCategoriasComponent } from './features/dashboard/administrador/g-categorias/g-categorias';
+import { GProductosComponent } from './features/dashboard/administrador/g-productos/g-productos';
+import { RegisterComponent } from './features/auth/pages/registro/registro';
 
 export const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent
+  },
+    {
+    path: 'registro',
+    component: RegisterComponent
   },
   { 
     path: 'oauth-callback', 
@@ -45,6 +51,12 @@ export const routes: Routes = [
       loadComponent: () =>
         import('./features/dashboard/administrador/g-categorias/g-categorias')
           .then(m => m.GCategoriasComponent)
+    },
+    {
+      path: 'g-productos',
+      loadComponent: () =>
+        import('./features/dashboard/administrador/g-productos/g-productos')
+          .then(m => m.GProductosComponent)
     }
   ]
 },

@@ -42,7 +42,11 @@ submit() {
     });
 }
 
+irARegistro(){
+  this.router.navigate(['/registro']);
+}
+
 loginWithGoogle() {
-  window.location.href = `${environment.apiUrl}/oauth2/authorization/google`;
+  window.location.href = `${environment.backendUrl}/oauth2/authorization/google`;
 }
 }

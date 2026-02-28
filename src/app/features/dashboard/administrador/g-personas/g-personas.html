@@ -96,7 +96,7 @@
         <div>
           <input formControlName="numeroIdentificacion"
                  class="w-full border p-2 rounded"
-                 placeholder="Identification" />
+                 placeholder="Identificacion" />
           <div *ngIf="form.get('numeroIdentificacion')?.touched && form.get('numeroIdentificacion')?.invalid"
                class="text-red-500 text-sm mt-1">
             Campo obligatorio
@@ -215,7 +215,7 @@
           <button type="submit"
                   [disabled]="form.invalid"
                   class="flex-1 bg-primary text-white p-2 rounded disabled:opacity-50">
-            {{ modoEdicion ? 'Actualizar' : 'Save User' }}
+            {{ modoEdicion ? 'Actualizar' : 'Guardar Usuario' }}
           </button>
         </div>
 

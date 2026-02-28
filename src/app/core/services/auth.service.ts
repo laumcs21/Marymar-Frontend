@@ -2,6 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { tap } from 'rxjs';
 import { environment} from '../../../environments/environment';
+import { Persona } from '../models/persona.model';
+import { Observable } from 'rxjs';
+
 
 @Injectable({
   providedIn: 'root'
@@ -21,8 +24,12 @@ export class AuthService {
       );
   }
 
+  registro(persona: any): Observable<Persona> {
+      return this.http.post<Persona>(`${this.apiUrl}/register`, persona);
+  }
+
   loginWithGoogle() {
-    window.location.href = `${environment.apiUrl}/oauth2/authorization/google`
+    window.location.href = `${environment.backendUrl}/oauth2/authorization/google`
   }
 
   getToken(): string | null {
