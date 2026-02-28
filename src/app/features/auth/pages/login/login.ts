@@ -25,6 +25,8 @@ export class LoginComponent {
 
   constructor(private auth: AuthService, private router: Router) {}
 
+  mostrarPassword = false;
+  
 submit() {
 
   const { email, contrasena } = this.form.value;
@@ -48,5 +50,9 @@ irARegistro(){
 
 loginWithGoogle() {
   window.location.href = `${environment.backendUrl}/oauth2/authorization/google`;
+}
+
+irARecuperar() {
+  this.router.navigate(['/recuperar-password']);
 }
 }

@@ -18,12 +18,25 @@
         autocomplete="new-email"
       >
 
-      <input 
-        type="password" 
+    <div class="password-container">
+
+      <input
+        [type]="mostrarPassword ? 'text' : 'password'"
         placeholder="Contraseña"
         formControlName="contrasena"
         autocomplete="new-password"
-      >
+      />
+
+      <span class="toggle-password"
+            (click)="mostrarPassword = !mostrarPassword">
+
+        <span class="material-symbols-outlined">
+          {{ mostrarPassword ? 'visibility_off' : 'visibility' }}
+        </span>
+
+      </span>
+
+    </div>
 
       <button type="submit" class="btn-primary">
         Ingresar
@@ -34,6 +47,10 @@
       <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" />
       Continuar con Google
     </button>
+
+    <p class="forgot-password" (click)="irARecuperar()">
+       ¿Olvidaste tu contraseña?
+    </p>
 
     <button 
       type="button" 

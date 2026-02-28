@@ -49,12 +49,25 @@
       </div>
 
       <!-- Contraseña -->
+<div class="password-container">
+
       <input
-        type="password"
-        formControlName="contrasena"
+        [type]="mostrarPassword ? 'text' : 'password'"
         placeholder="Contraseña"
+        formControlName="contrasena"
         autocomplete="new-password"
       />
+
+      <span class="toggle-password"
+            (click)="mostrarPassword = !mostrarPassword">
+
+        <span class="material-symbols-outlined">
+          {{ mostrarPassword ? 'visibility_off' : 'visibility' }}
+        </span>
+
+      </span>
+
+    </div>
       <div class="error" *ngIf="form.get('contrasena')?.touched && form.get('contrasena')?.invalid">
         <span *ngIf="form.get('contrasena')?.errors?.['required']">Obligatoria</span>
         <span *ngIf="form.get('contrasena')?.errors?.['minlength']">· Mínimo 6 caracteres</span>

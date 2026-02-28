@@ -58,8 +58,21 @@ export class AuthService {
 }
 
 resendCode(email: string) {
-  return this.http.post<any>(`${environment.apiUrl}/auth/resend-code`, {
+  return this.http.post<any>(`${environment.apiUrl}/resend-code`, {
     email: email
+  });
+}
+
+forgotPassword(email: string) {
+  return this.http.post(`${this.apiUrl}/forgot-password`, {
+    email: email
+  });
+}
+
+resetPassword(token: string, newPassword: string) {
+  return this.http.post(`${this.apiUrl}/reset-password`, {
+    token: token,
+    newPassword: newPassword
   });
 }
 

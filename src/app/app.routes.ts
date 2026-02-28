@@ -12,6 +12,8 @@ import { GPersonasComponent } from './features/dashboard/administrador/g-persona
 import { GCategoriasComponent } from './features/dashboard/administrador/g-categorias/g-categorias';
 import { GProductosComponent } from './features/dashboard/administrador/g-productos/g-productos';
 import { RegisterComponent } from './features/auth/pages/registro/registro';
+import { ForgotPasswordComponent } from './features/auth/pages/forgot-password/forgot-password';
+import { ResetPasswordComponent } from './features/auth/pages/reset-password/reset-password';
 
 export const routes: Routes = [
   {
@@ -33,6 +35,12 @@ export const routes: Routes = [
     {
   path: 'verify-code',
   component: VerifyCode,
+  },
+  { path: 'recuperar-password', 
+    component: ForgotPasswordComponent 
+  },
+  { path: 'reset-password',
+    component: ResetPasswordComponent 
   },
 {
   path: 'dashboard/administrador',

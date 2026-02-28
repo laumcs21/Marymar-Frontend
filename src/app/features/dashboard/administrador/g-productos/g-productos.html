@@ -1,4 +1,4 @@
-<section class="flex-1 p-10 overflow-y-auto">
+<section class="flex flex-col flex-1 p-10 min-h-0">
 <div class="max-w-6xl mx-auto">
 
   <!-- HEADER -->
@@ -69,7 +69,7 @@
   </div>
 
   <!-- GRID DE PRODUCTOS -->
-  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 ">
+  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 overflow-y-auto min-h-0">
 
     <div *ngFor="let prod of productos"
          class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow">

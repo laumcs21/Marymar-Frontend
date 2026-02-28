@@ -22,6 +22,9 @@ export class RegisterComponent implements OnInit {
     private authService: AuthService
   ) {}
 
+    mostrarPassword = false;
+
+
   ngOnInit(): void {
     this.form = this.fb.group({
       numeroIdentificacion: ['', Validators.required],
