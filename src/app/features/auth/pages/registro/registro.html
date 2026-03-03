@@ -95,6 +95,26 @@
         Dirección obligatoria
       </div>
 
+      <div class="checkbox-container">
+        <input
+          type="checkbox"
+          formControlName="aceptaHabeasData"
+          id="aceptaDatos"
+        />
+
+        <label for="aceptaDatos">
+          Acepto la
+          <a routerLink="/politica" target="_blank">
+            Política de Tratamiento de Datos
+          </a>
+        </label>
+      </div>
+
+      <div *ngIf="form.get('aceptaHabeasData')?.touched 
+                  && form.get('aceptaHabeasData')?.invalid"
+          class="error">
+        Debes aceptar la política de tratamiento de datos.
+      </div>
       <!-- Botón Registrar -->
       <button type="submit" class="btn-primary" [disabled]="form.invalid">
         Registrarse
@@ -106,11 +126,6 @@
       </button>
 
     </form>
-
-    <button class="google-btn" type="button" (click)="registroConGoogle()">
-      <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" />
-      Registrarse con Google
-    </button>
 
     <div *ngIf="serverError" class="server-error">
       {{ serverError }}

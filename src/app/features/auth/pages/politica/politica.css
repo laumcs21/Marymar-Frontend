@@ -1,0 +1,62 @@
+.politica-container {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding: 50px 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.politica-card {
+  background: white;
+  max-width: 900px;
+  padding: 50px;
+  border-radius: 14px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  line-height: 1.7;
+  font-size: 15px;
+}
+
+.titulo-principal {
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  margin-bottom: 5px;
+}
+
+.subtitulo {
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: #E27C3E;
+  margin-bottom: 20px;
+}
+
+.separador {
+  margin: 20px 0 30px 0;
+  border: none;
+  border-top: 1px solid #ddd;
+}
+
+.politica-card h3 {
+  margin-top: 30px;
+  margin-bottom: 10px;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.politica-card ul {
+  padding-left: 20px;
+  margin-bottom: 15px;
+}
+
+.politica-card li {
+  margin-bottom: 6px;
+}
+
+.fecha {
+  margin-top: 40px;
+  font-size: 13px;
+  color: #777;
+  text-align: right;
+}

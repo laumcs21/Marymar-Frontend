@@ -14,6 +14,9 @@ import { environment } from '../../../../../environments/environment';
 })
 export class LoginComponent {
 
+  error: string | null=null 
+
+
   form = new FormGroup({
     email: new FormControl(''),
     contrasena: new FormControl('')
@@ -28,7 +31,7 @@ export class LoginComponent {
   mostrarPassword = false;
   
 submit() {
-
+  this.error = null;
   const { email, contrasena } = this.form.value;
 
   this.auth.login(email!, contrasena!)
@@ -38,9 +41,17 @@ submit() {
 
         this.router.navigate(['/verify-code']);
       },
-      error: (err) => {
-        console.error('Error login:', err);
+    error: (err) => {
+      console.log(err);
+
+      if (err.error?.error) {
+        this.error = err.error.error;
+      } else if (typeof err.error === 'string') {
+        this.error = err.error;
+      } else {
+        this.error = 'Correo o contraseña incorrectos';
       }
+    }
     });
 }
 

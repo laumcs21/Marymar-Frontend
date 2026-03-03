@@ -43,6 +43,19 @@
       </button>
     </form>
 
+    <div *ngIf="error"
+        class="mt-4 p-4 rounded-lg border border-red-300 bg-red-50 text-red-700 text-sm flex items-start gap-3 animate-fadeIn">
+
+      <span class="material-symbols-outlined text-red-600">
+        warning
+      </span>
+
+      <span>
+        {{ error }}
+      </span>
+
+    </div>
+    
     <button class="google-btn" (click)="loginWithGoogle()" >
       <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" />
       Continuar con Google
@@ -58,6 +71,7 @@
       (click)="irARegistro()">
       ¿No tienes cuenta? Regístrate
     </button>
-
   </div>
+
+  
 </div>

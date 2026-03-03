@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule,ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './registro.html',
   styleUrls: ['./registro.css']
 })
@@ -15,6 +15,7 @@ export class RegisterComponent implements OnInit {
 
   form!: FormGroup;
   serverError: string | null = null;
+  
 
   constructor(
     private fb: FormBuilder,
@@ -37,6 +38,7 @@ export class RegisterComponent implements OnInit {
       ]],
       fechaNacimiento: ['', Validators.required],
       direccionEnvio: ['', Validators.required],
+      aceptaHabeasData: [false, Validators.requiredTrue]
     });
   }
 
@@ -66,7 +68,4 @@ export class RegisterComponent implements OnInit {
     this.router.navigate(['/login']);
   }
 
-  registroConGoogle() {
-    console.log('Registro con Google');
-  }
 }

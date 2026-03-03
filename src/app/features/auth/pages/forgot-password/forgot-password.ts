@@ -41,7 +41,7 @@ enviar() {
         this.error = '';
       },
       error: err => {
-        this.error = err.error?.message || 'Error enviando correo';
+        this.error = err.error?.message || 'Si el correo existe, te enviamos un enlace.';
       }
     });
 }

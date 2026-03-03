@@ -21,6 +21,13 @@ export class PersonaService {
     return this.http.post<Persona>(this.apiUrl, persona);
   }
 
+  crearDesdeAdmin(payload: any) {
+  return this.http.post(
+    this.apiUrl,
+    payload
+  );
+}
+
   actualizar(id: number, persona: any): Observable<Persona> {
     return this.http.put<Persona>(`${this.apiUrl}/${id}`, persona);
   }

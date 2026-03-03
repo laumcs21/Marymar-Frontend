@@ -107,6 +107,13 @@ export class GPersonasComponent implements OnInit {
 
 guardarUsuario() {
 
+  Object.keys(this.form.controls).forEach(key => {
+  const control = this.form.get(key);
+  if (control?.invalid) {
+    console.log("Control inválido:", key, control.errors);
+  }
+});
+
   if (this.form.invalid) {
     this.form.markAllAsTouched();
     return;
@@ -116,7 +123,7 @@ guardarUsuario() {
 
   if (this.modoEdicion) {
     if (!payload.contrasena || String(payload.contrasena).trim() === '') {
-      delete payload.contrasena; // <-- CLAVE
+      delete payload.contrasena;
     }
   }
 
@@ -129,7 +136,7 @@ guardarUsuario() {
       error: (err) => this.manejarErrorBackend(err)
     });
   } else {
-    this.personaService.crear(payload).subscribe({
+    this.personaService.crearDesdeAdmin(payload).subscribe({
       next: () => {
         this.cargarUsuarios();
         this.cerrarModal();

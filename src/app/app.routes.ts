@@ -14,6 +14,7 @@ import { GProductosComponent } from './features/dashboard/administrador/g-produc
 import { RegisterComponent } from './features/auth/pages/registro/registro';
 import { ForgotPasswordComponent } from './features/auth/pages/forgot-password/forgot-password';
 import { ResetPasswordComponent } from './features/auth/pages/reset-password/reset-password';
+import { PoliticaComponent } from './features/auth/pages/politica/politica';
 
 export const routes: Routes = [
   {
@@ -42,6 +43,11 @@ export const routes: Routes = [
   { path: 'reset-password',
     component: ResetPasswordComponent 
   },
+  {
+  path: 'politica',
+    component: PoliticaComponent 
+
+},
 {
   path: 'dashboard/administrador',
   component: AdminComponent,
