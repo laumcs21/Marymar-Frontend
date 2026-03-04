@@ -17,7 +17,49 @@
     </button>
     </div>
 
-    <!-- TABLA (NO TOCADA) -->
+    <div class="flex flex-wrap gap-4 mb-6 items-center">
+
+  <!-- BUSCADOR -->
+  <div class="relative w-full md:w-1/2">
+    <input
+      type="text"
+      placeholder="Buscar por nombre o identificación..."
+      [(ngModel)]="busqueda"
+      (input)="aplicarFiltros()"
+      class="w-full border rounded-lg px-4 py-2 pl-10 focus:ring-2 focus:ring-primary outline-none"
+    />
+    <span class="absolute left-3 top-2.5 text-gray-400 material-symbols-outlined">
+      search
+    </span>
+  </div>
+
+  <!-- FILTRO ROL -->
+  <select
+    [(ngModel)]="filtroRol"
+    (change)="aplicarFiltros()"
+    class="border rounded-lg px-4 py-2 pr-10 focus:ring-2 focus:ring-primary outline-none appearence-none bg-white"
+  >
+    <option value="">Todos los roles</option>
+    <option value="ADMINISTRADOR">Administrador</option>
+    <option value="MESERO">Mesero</option>
+    <option value="CLIENTE">Cliente</option>
+  </select>
+
+  <!-- LIMPIAR -->
+  <button
+    (click)="limpiarFiltros()"
+    class="px-4 py-2 border rounded-lg hover:bg-gray-100 transition">
+    Limpiar
+  </button>
+
+  <!-- CONTADOR -->
+  <span class="text-sm text-gray-500">
+    {{ usuariosFiltrados.length }} resultado(s)
+  </span>
+
+</div>
+
+    <!-- TABLA -->
     <div class="bg-white rounded-xl border shadow-sm mt-6 flex flex-col flex-1 min-h-0">
 
       <div class="overflow-y-auto overflow-x-auto" style="max-height: 60vh;">
@@ -34,46 +76,55 @@
           </thead>
 
           <tbody>
-            <tr *ngFor="let usuario of usuarios" class="border-b">
+            <tr *ngFor="let usuario of usuariosFiltrados" class="border-b">
               <td class="px-6 py-4">{{ usuario.nombre }}</td>
               <td class="px-6 py-4">{{ usuario.email }}</td>
               <td class="px-6 py-4">{{ formatearRol(usuario.rol) }}</td>
               <td class="px-6 py-4">
                 {{ usuario.activo ? 'Activo' : 'Inactivo' }}</td>
 
-                <td class="px-6 py-4 text-right">
-  <div class="flex justify-end items-center gap-4">
+<td class="px-6 py-4 text-right relative">
+  <div class="flex justify-end items-center gap-3">
 
-    <!-- EDITAR -->
-    <button
-      (click)="editarUsuario(usuario)"
-      class="text-blue-600 hover:text-blue-800 transition-colors"
-      title="Editar usuario">
-      <span class="material-symbols-outlined text-[20px]">
-        edit
-      </span>
+    <!-- VER -->
+    <button (click)="verUsuario(usuario)"
+            class="text-slate-500 hover:text-primary transition"
+            title="Ver">
+      <span class="material-symbols-outlined text-[20px]">visibility</span>
     </button>
 
-    <!-- ELIMINAR -->
-    <button
-      (click)="eliminarUsuario(usuario.id)"
-      class="text-red-600 hover:text-red-800 transition-colors"
-      title="Eliminar usuario">
-      <span class="material-symbols-outlined text-[20px]">
-        delete
-      </span>
-    </button>
+    <!-- MENU -->
+    <div class="relative">
+      <button (click)="toggleMenu(usuario.id)"
+              class="text-slate-500 hover:text-slate-800 transition"
+              title="Más acciones">
+        <span class="material-symbols-outlined text-[20px]">more_vert</span>
+      </button>
+
+      <div *ngIf="menuAbierto === usuario.id"
+           class="absolute right-0 mt-2 w-44 bg-white border rounded-lg shadow-lg z-50 overflow-hidden">
+
+        <button (click)="editarUsuario(usuario); cerrarMenu()"
+                class="w-full text-left px-4 py-2 hover:bg-slate-50 text-sm">
+          Editar
+        </button>
+
+        <button (click)="toggleEstado(usuario);  cerrarMenu()"
+                class="w-full text-left px-4 py-2 hover:bg-slate-50 text-sm">
+          {{ usuario.activo ? 'Desactivar' : 'Activar' }}
+        </button>
+
+        <button (click)="eliminarUsuario(usuario.id); cerrarMenu()"
+                class="w-full text-left px-4 py-2 hover:bg-red-50 text-red-600 text-sm">
+          Eliminar
+        </button>
+      </div>
+    </div>
 
   </div>
 </td>
-            </tr>
-          </tbody>
 
-        </table>
-      </div>
 
-    </div>
-  </div>
 
   <!-- MODAL -->
   <div *ngIf="mostrarModal"
@@ -129,22 +180,53 @@
           </div>
         </div>
 
-        <!-- CONTRASEÑA -->
-        <div *ngIf="!modoEdicion">
-          <input formControlName="contrasena"
-                 type="password"
-                 class="w-full border p-2 rounded"
-                 placeholder="Contraseña" 
-                 autocomplete="new-password"/>
-          <div *ngIf="form.get('contrasena')?.touched && form.get('contrasena')?.invalid"
-               class="text-red-500 text-sm mt-1">
-            <span *ngIf="form.get('contrasena')?.errors?.['required']">Obligatoria</span>
-            <span *ngIf="form.get('contrasena')?.errors?.['minlength']">Mínimo 6 caracteres</span>
-            <span *ngIf="form.get('contrasena')?.errors?.['pattern']">
-              Debe tener mayúscula, minúscula, número y símbolo
-            </span>
-          </div>
-        </div>
+    <!-- CONTRASEÑA -->
+    <div *ngIf="!modoEdicion">
+
+      <div class="relative">
+
+        <input
+          formControlName="contrasena"
+          [type]="mostrarPassword ? 'text' : 'password'"
+          class="w-full border p-2 rounded pr-10"
+          placeholder="Contraseña"
+          autocomplete="new-password"
+          (focus)="mostrarReglasPassword = true"
+          (blur)="mostrarReglasPassword = false"
+        />
+
+        <!-- OJO -->
+        <span
+          (click)="mostrarPassword = !mostrarPassword"
+          class="absolute right-3 top-2.5 cursor-pointer text-gray-500 hover:text-primary material-symbols-outlined">
+          {{ mostrarPassword ? 'visibility_off' : 'visibility' }}
+        </span>
+
+      </div>
+
+      <!-- REGLAS -->
+      <div *ngIf="mostrarReglasPassword"
+          class="text-red-500 text-xs mt-2 leading-5">
+
+        La contraseña debe contener:<br>
+        • Mínimo 6 caracteres<br>
+        • Una letra mayúscula<br>
+        • Una letra minúscula<br>
+        • Un número<br>
+        • Un símbolo
+
+      </div>
+
+      <!-- ERRORES -->
+      <div *ngIf="form.get('contrasena')?.touched && form.get('contrasena')?.invalid"
+          class="text-red-500 text-sm mt-1">
+
+        <span *ngIf="form.get('contrasena')?.errors?.['required']">
+          Contraseña obligatoria
+        </span>
+      </div>
+
+    </div>
 
         <!-- FECHA -->
         <div>
@@ -209,4 +291,55 @@
       <div *ngIf="serverError" class="text-red-600 text-sm mt-2">{{ serverError }}</div>
     </div>
   </div>
+
+  <!-- MODAL VISTA -->
+<div *ngIf="mostrarModalVista"
+     class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+
+  <div class="bg-white rounded-2xl w-full max-w-md shadow-2xl border p-6">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-lg font-bold text-primary">Detalle del Usuario</h2>
+      <button (click)="cerrarModalVista()" class="text-slate-400 hover:text-primary">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <div class="space-y-3 text-sm">
+      <div class="flex justify-between"><span class="text-slate-500">Identificación</span><span class="font-semibold">{{ usuarioVista?.numeroIdentificacion }}</span></div>
+      <div class="flex justify-between"><span class="text-slate-500">Nombre</span><span class="font-semibold">{{ usuarioVista?.nombre }}</span></div>
+      <div class="flex justify-between"><span class="text-slate-500">Email</span><span class="font-semibold">{{ usuarioVista?.email }}</span></div>
+      <div class="flex justify-between"><span class="text-slate-500">Rol</span><span class="font-semibold">{{ formatearRol(usuarioVista?.rol || '') }}</span></div>
+      <div class="flex justify-between">
+        <span class="text-slate-500">Estado</span>
+        <span class="px-2 py-1 rounded-full text-xs font-semibold"
+              [ngClass]="usuarioVista?.activo ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
+          {{ usuarioVista?.activo ? 'Activo' : 'Inactivo' }}
+        </span>
+      </div>
+
+      <div class="flex justify-between"><span class="text-slate-500">Fecha nacimiento</span><span class="font-semibold">{{ usuarioVista?.fechaNacimiento }}</span></div>
+
+      <div *ngIf="usuarioVista?.salario != null" class="flex justify-between">
+        <span class="text-slate-500">Salario</span><span class="font-semibold">${{ usuarioVista?.salario }}</span>
+      </div>
+
+      <div *ngIf="usuarioVista?.direccionEnvio" class="flex justify-between">
+        <span class="text-slate-500">Dirección</span><span class="font-semibold">{{ usuarioVista?.direccionEnvio }}</span>
+      </div>
+    </div>
+
+    <div class="mt-6 flex justify-end">
+      <button (click)="cerrarModalVista()"
+              class="px-4 py-2 border rounded-lg hover:bg-slate-50">
+        Cerrar
+      </button>
+    </div>
+  </div>
+</div>
+</tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    </div>
 </section>

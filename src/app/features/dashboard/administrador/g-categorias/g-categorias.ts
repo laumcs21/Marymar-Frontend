@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormsModule } from '@angular/forms';
 import { CategoriaService } from '../../../../core/services/categoria.service';
 import { Categoria } from '../../../../core/models/categoria.model';
 
 @Component({
   selector: 'app-g-categorias',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './g-categorias.html',
   styleUrls: ['./g-categorias.css']
 })
@@ -18,6 +18,8 @@ export class GCategoriasComponent implements OnInit {
   mostrarModal = false;
   modoEdicion = false;
   categoriaEditandoId: number | null = null;
+  terminoBusqueda: string = '';
+  categoriasFiltradas: Categoria []=[];
 
   constructor(
     private categoriaService: CategoriaService,
@@ -32,11 +34,12 @@ export class GCategoriasComponent implements OnInit {
     this.cargarCategorias();
   }
 
-  cargarCategorias() {
-    this.categoriaService.obtenerTodas().subscribe(data => {
-      this.categorias = data;
-    });
-  }
+cargarCategorias() {
+  this.categoriaService.obtenerTodas().subscribe(data => {
+    this.categorias = data;
+    this.categoriasFiltradas = data; 
+  });
+}
 
   abrirModal() {
     this.modoEdicion = false;
@@ -83,4 +86,17 @@ export class GCategoriasComponent implements OnInit {
     this.mostrarModal = false;
     this.form.reset();
   }
+
+  filtrarCategorias() {
+  const termino = this.terminoBusqueda.toLowerCase().trim();
+
+  if (!termino) {
+    this.categoriasFiltradas = this.categorias;
+    return;
+  }
+
+  this.categoriasFiltradas = this.categorias.filter(cat =>
+    cat.nombre.toLowerCase().includes(termino)
+  );
+}
 }

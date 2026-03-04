@@ -1,5 +1,5 @@
-<section class="flex flex-col flex-1 p-10 min-h-0">
-<div class="max-w-6xl mx-auto">
+<section class="flex flex-col flex-1 min-h-screen p-10">
+<div class="max-w-6xl mx-auto w-full flex flex-col flex-1">
 
   <!-- HEADER -->
   <div class="mb-10 flex justify-between items-start">
@@ -68,8 +68,12 @@
 
   </div>
 
-  <!-- GRID DE PRODUCTOS -->
-  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 overflow-y-auto min-h-0">
+<!-- CONTENEDOR DE RESULTADOS -->
+<div class="flex-1 min-h-0 flex flex-col">
+
+  <!-- GRID CUANDO HAY PRODUCTOS -->
+  <div *ngIf="productos.length > 0; else emptyState"
+       class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
     <div *ngFor="let prod of productos"
          class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
@@ -107,26 +111,22 @@
             <button
               (click)="editarProducto(prod)"
               class="p-2 text-slate-400 hover:text-primary transition-colors">
-
               <span class="material-symbols-outlined">edit</span>
             </button>
 
-        <!-- Desactivar -->
-        <button
-            (click)="toggleDisponibilidad(prod)"
-            class="p-2 text-slate-400 hover:text-amber-500 transition-colors">
-            <span class="material-symbols-outlined">
-            {{ prod.activo ? 'visibility_off' : 'visibility' }}
-            </span>
-        </button>
+            <button
+              (click)="toggleDisponibilidad(prod)"
+              class="p-2 text-slate-400 hover:text-amber-500 transition-colors">
+              <span class="material-symbols-outlined">
+                {{ prod.activo ? 'visibility_off' : 'visibility' }}
+              </span>
+            </button>
 
-        <!-- Eliminar Permanente -->
-        <button
-            (click)="eliminarDefinitivo(prod.id)"
-            class="p-2 text-slate-400 hover:text-red-500 transition-colors">
-            <span class="material-symbols-outlined">delete</span>
-        </button>
-
+            <button
+              (click)="eliminarDefinitivo(prod.id)"
+              class="p-2 text-slate-400 hover:text-red-500 transition-colors">
+              <span class="material-symbols-outlined">delete</span>
+            </button>
 
           </div>
 
@@ -138,7 +138,36 @@
 
   </div>
 
+  <!-- EMPTY STATE -->
+  <ng-template #emptyState>
+    <div class="flex flex-col items-center justify-center min-h-[45vh] bg-white rounded-xl border shadow-sm p-10 text-center">
+
+      <span class="material-symbols-outlined text-6xl text-slate-300 mb-4">
+        restaurant
+      </span>
+
+      <h3 class="text-lg font-semibold text-slate-700">
+        No hay productos en esta categoría
+      </h3>
+
+      <p class="text-slate-500 mt-2">
+        Agrega un producto para que aparezca en el menú.
+      </p>
+
+      <button
+        (click)="abrirModalCrear()"
+        class="mt-6 bg-primary text-white px-5 py-2.5 rounded-lg text-sm font-bold hover:opacity-90 transition flex items-center gap-2">
+
+        <span class="material-symbols-outlined">add</span>
+        Nuevo Producto
+      </button>
+
+    </div>
+  </ng-template>
+
 </div>
+</div>
+</section>
 <!-- MODAL CREAR / EDITAR PRODUCTO -->
 <div *ngIf="mostrarModal"
      class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -319,4 +348,3 @@
   </div>
 
 </div>
-</section>

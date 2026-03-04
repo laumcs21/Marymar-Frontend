@@ -28,6 +28,13 @@ export class PersonaService {
   );
 }
 
+cambiarEstado(id: number, activo: boolean) {
+  return this.http.patch(
+    `${this.apiUrl}/${id}/estado?activo=${activo}`,
+    {}
+  );
+}
+
   actualizar(id: number, persona: any): Observable<Persona> {
     return this.http.put<Persona>(`${this.apiUrl}/${id}`, persona);
   }

@@ -18,9 +18,9 @@
     <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
 
       <a routerLink="/dashboard/administrador"
-      routerLinkActive="sidebar-item-active"
-      [routerLinkActiveOptions]="{exact:true}"
-      class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-primary/5 rounded-lg transition-colors cursor-pointer">  
+        routerLinkActive="sidebar-item-active"
+        [routerLinkActiveOptions]="{exact:true}"
+        class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-primary/5 rounded-lg transition-colors cursor-pointer">  
       
         <span class="material-symbols-outlined">dashboard</span>
         <span class="font-medium text-sm">Dashboard</span>
@@ -56,25 +56,29 @@
 
     </nav>
 
-    <div class="p-4 border-t border-neutral-muted dark:border-slate-800">
-      <button
-        (click)="logout()"
-        class="flex w-full items-center gap-3 px-4 py-3 text-slate-600 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors">
-        <span class="material-symbols-outlined">logout</span>
-        <span class="font-medium text-sm">Cerrar Sesión</span>
-      </button>
-    </div>
-
   </aside>
 
   <!-- MAIN -->
   <main class="flex-1 flex flex-col overflow-hidden min-h-0">
 
+    <!-- HEADER -->
     <header class="h-20 bg-white dark:bg-slate-900 border-b border-neutral-muted dark:border-slate-800 flex items-center justify-between px-8">
 
       <h1 class="text-xl font-bold text-primary">
         Panel Administrativo
       </h1>
+
+      <button
+        (click)="logout()"
+        class="flex items-center gap-2 bg-orange-500 text-white px-5 py-2 rounded-lg font-semibold hover:bg-orange-600 transition">
+
+        <span class="material-symbols-outlined text-[20px]">
+          logout
+        </span>
+
+        Cerrar sesión
+
+      </button>
 
     </header>
 

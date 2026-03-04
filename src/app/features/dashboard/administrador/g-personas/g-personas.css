@@ -33,3 +33,22 @@
   display: flex;
   justify-content: space-between;
 }
+
+.password-rules{
+  font-size:12px;
+  margin-top:6px;
+  color:#888;
+}
+
+.password-rules div{
+  margin:2px 0;
+}
+
+.password-rules .ok{
+  color:#2e7d32;
+  font-weight:500;
+}
+
+.material-symbols-outlined{
+  font-size:20px;
+}

@@ -10,13 +10,14 @@ import {
   ReactiveFormsModule,
   Validators,
   AbstractControl,
-  ValidationErrors
+  ValidationErrors,
+  FormsModule
 } from '@angular/forms';
 
 @Component({
   selector: 'app-g-personas',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './g-personas.html',
   styleUrls: ['./g-personas.css']
 })
@@ -29,6 +30,14 @@ export class GPersonasComponent implements OnInit {
   serverError: string | null=null;
   modoEdicion = false;
   usuarioEditandoId : number | null = null;
+  filtroRol: string = '';
+  busqueda: string = '';
+  usuariosFiltrados: Persona [] =[];
+  usuarioVista: Persona | null = null;
+  mostrarModalVista = false;
+  menuAbierto: number | null = null;
+  mostrarPassword = false;
+  mostrarReglasPassword = false;
 
   constructor(
     private personaService: PersonaService,
@@ -166,10 +175,43 @@ private manejarErrorBackend(err: any) {
   this.serverError = mensaje;
 }
 
-  cargarUsuarios() {
-    this.personaService.obtenerTodas().subscribe({
-      next: (data) => this.usuarios = data
+    cargarUsuarios() {
+      this.personaService.obtenerTodas().subscribe({
+        next: (data) => {
+          this.usuarios = data;
+          this.aplicarFiltros();
+        }
+      });
+    }
+
+    private normalizar(texto: string): string {
+  return texto
+    ? texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
+    : '';
+}
+
+  aplicarFiltros() {
+
+    this.usuariosFiltrados = this.usuarios.filter(usuario => {
+
+      const coincideRol = this.filtroRol
+        ? usuario.rol === this.filtroRol
+        : true;
+
+      const textoBusqueda = this.normalizar(this.busqueda);
+
+      const coincideBusqueda =
+        this.normalizar(usuario.nombre).includes(textoBusqueda) ||
+        this.normalizar(usuario.numeroIdentificacion).includes(textoBusqueda);
+
+      return coincideRol && coincideBusqueda;
     });
+  }
+
+  limpiarFiltros() {
+    this.busqueda = '';
+    this.filtroRol = '';
+    this.aplicarFiltros();
   }
 
     formatearRol(rol: string): string {
@@ -222,4 +264,33 @@ private manejarErrorBackend(err: any) {
   contrasena.clearValidators();
   contrasena.updateValueAndValidity();
 }
+
+toggleEstado(usuario: Persona) {
+  this.personaService.cambiarEstado(usuario.id, !usuario.activo)
+    .subscribe({
+      next: () => {
+        usuario.activo = !usuario.activo;
+      },
+      error: err => console.error(err)
+    });
+}
+
+toggleMenu(id: number) {
+  this.menuAbierto = this.menuAbierto === id ? null : id;
+}
+
+verUsuario(usuario: Persona) {
+  this.usuarioVista = usuario;
+  this.mostrarModalVista = true;
+}
+
+cerrarModalVista() {
+  this.mostrarModalVista = false;
+  this.usuarioVista = null;
+}
+
+cerrarMenu(){
+  this.menuAbierto = null;
+}
+
 }
