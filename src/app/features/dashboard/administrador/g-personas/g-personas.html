@@ -181,42 +181,48 @@
         </div>
 
     <!-- CONTRASEÑA -->
-    <div *ngIf="!modoEdicion">
+<div class="password-container">
 
-      <div class="relative">
+  <div class="password-field">
 
-        <input
-          formControlName="contrasena"
-          [type]="mostrarPassword ? 'text' : 'password'"
-          class="w-full border p-2 rounded pr-10"
-          placeholder="Contraseña"
-          autocomplete="new-password"
-          (focus)="mostrarReglasPassword = true"
-          (blur)="mostrarReglasPassword = false"
-        />
+    <input
+      [type]="tipoInputPassword"
+      formControlName="contrasena"
+      placeholder="Contraseña"
+      autocomplete="new-password"
+      name="marymar_registro_password"
+      autocapitalize="off"
+      spellcheck="false"
+      data-lpignore="true"
+      data-form-type="other"
+      (focus)="mostrarReglasPassword = true"
+      (blur)="ocultarReglasConDelay()"
+      (input)="activarPassword()"
+    />
 
-        <!-- OJO -->
-        <span
-          (click)="mostrarPassword = !mostrarPassword"
-          class="absolute right-3 top-2.5 cursor-pointer text-gray-500 hover:text-primary material-symbols-outlined">
-          {{ mostrarPassword ? 'visibility_off' : 'visibility' }}
-        </span>
+    <span
+      class="toggle-password"
+      (mousedown)="$event.preventDefault()"
+      (click)="togglePassword()">
 
-      </div>
+      <span class="material-symbols-outlined">
+        {{ mostrarPassword ? 'visibility_off' : 'visibility' }}
+      </span>
 
-      <!-- REGLAS -->
-      <div *ngIf="mostrarReglasPassword"
-          class="text-red-500 text-xs mt-2 leading-5">
+    </span>
 
-        La contraseña debe contener:<br>
-        • Mínimo 6 caracteres<br>
-        • Una letra mayúscula<br>
-        • Una letra minúscula<br>
-        • Un número<br>
-        • Un símbolo
+  </div>
 
-      </div>
+  <div class="password-rules" *ngIf="mostrarReglasPassword">
 
+    <p>La contraseña debe contener:</p>
+    <p>• Mínimo 6 caracteres</p>
+    <p>• Una letra mayúscula</p>
+    <p>• Una letra minúscula</p>
+    <p>• Un número</p>
+    <p>• Un símbolo</p>
+
+</div>
       <!-- ERRORES -->
       <div *ngIf="form.get('contrasena')?.touched && form.get('contrasena')?.invalid"
           class="text-red-500 text-sm mt-1">
@@ -232,7 +238,8 @@
         <div>
           <input formControlName="fechaNacimiento"
                  type="date"
-                 class="w-full border p-2 rounded" />
+                 class="w-full border p-2 rounded" 
+                 [max]="fechaMaxima"/>
           <div *ngIf="form.get('fechaNacimiento')?.touched && form.get('fechaNacimiento')?.invalid"
                class="text-red-500 text-sm mt-1">
             Fecha obligatoria

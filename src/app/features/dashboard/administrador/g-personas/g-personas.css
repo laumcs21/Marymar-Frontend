@@ -34,12 +34,6 @@
   justify-content: space-between;
 }
 
-.password-rules{
-  font-size:12px;
-  margin-top:6px;
-  color:#888;
-}
-
 .password-rules div{
   margin:2px 0;
 }
@@ -51,4 +45,39 @@
 
 .material-symbols-outlined{
   font-size:20px;
+}
+
+.password-field input {
+  width: 100%;
+  padding-right: 40px;
+}
+
+.password-container {
+  width: 100%;
+}
+
+.password-field {
+  position: relative;
+  width: 100%;
+}
+
+.password-field input {
+  width: 100%;
+  box-sizing: border-box;
+  padding-right: 45px;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #666;
+}
+
+.password-rules {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #c0392b;
 }

@@ -93,20 +93,30 @@ registrar() {
     next: () => {
       this.router.navigate(['/login']);
     },
-    error: (err) => {
+error: (err) => {
+console.log(err);
+  let mensaje = '';
 
-      const mensaje = err.error?.message || '';
-
-      if (mensaje.toLowerCase().includes('correo')) {
-        this.form.get('email')?.setErrors({ duplicado: true });
-      }
-
-      if (mensaje.toLowerCase().includes('identificación')) {
-        this.form.get('numeroIdentificacion')?.setErrors({ duplicado: true });
-      }
-
-      this.serverError = mensaje || 'Error al registrar usuario';
+  if (err.error) {
+    if (typeof err.error === 'string') {
+      mensaje = err.error;
+    } else if (err.error.message) {
+      mensaje = err.error.message;
     }
+  }
+
+  mensaje = mensaje || 'Error al registrar usuario';
+
+  if (mensaje.toLowerCase().includes('correo')) {
+    this.form.get('email')?.setErrors({ duplicado: true });
+  }
+
+  if (mensaje.toLowerCase().includes('identificación')) {
+    this.form.get('numeroIdentificacion')?.setErrors({ duplicado: true });
+  }
+
+  this.serverError = mensaje;
+}
   });
 }
 
@@ -143,5 +153,18 @@ activarPassword() {
   if (this.tipoInputPassword !== 'password') {
     this.tipoInputPassword = 'password';
   }
+}
+
+togglePassword() {
+
+  this.mostrarPassword = !this.mostrarPassword;
+
+  this.tipoInputPassword = this.mostrarPassword ? 'text' : 'password';
+}
+
+ocultarReglasConDelay() {
+  setTimeout(() => {
+    this.mostrarReglasPassword = false;
+  }, 150);
 }
 }

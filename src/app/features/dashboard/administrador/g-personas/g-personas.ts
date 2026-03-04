@@ -38,6 +38,8 @@ export class GPersonasComponent implements OnInit {
   menuAbierto: number | null = null;
   mostrarPassword = false;
   mostrarReglasPassword = false;
+  fechaMaxima: string = new Date().toISOString().split('T')[0];
+  tipoInputPassword: string = 'text';
 
   constructor(
     private personaService: PersonaService,
@@ -291,6 +293,23 @@ cerrarModalVista() {
 
 cerrarMenu(){
   this.menuAbierto = null;
+}
+
+ocultarReglasConDelay() {
+  setTimeout(() => {
+    this.mostrarReglasPassword = false;
+  }, 150);
+}
+
+activarPassword() {
+  if (this.tipoInputPassword !== 'password') {
+    this.tipoInputPassword = 'password';
+  }
+}
+
+togglePassword() {
+  this.mostrarPassword = !this.mostrarPassword;
+  this.tipoInputPassword = this.mostrarPassword ? 'text' : 'password';
 }
 
 }

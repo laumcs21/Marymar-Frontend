@@ -39,7 +39,7 @@
       <div class="error" *ngIf="(form.get('email')?.touched || formEnviado)  && form.get('email')?.invalid">
         <span *ngIf="form.get('email')?.errors?.['required']">Correo obligatorio</span>
         <span *ngIf="form.get('email')?.errors?.['email']">· Formato inválido</span>
-        <span *ngIf="form.get('email')?.errors?.['duplicado']">· Ya registrado</span>
+        <span *ngIf="form.get('email')?.errors?.['duplicado']">· el correo ya está registrado</span>
       </div>
 
  <!-- Contraseña -->
@@ -55,15 +55,20 @@
       autocapitalize="off"
       spellcheck="false"
       (focus)="mostrarReglasPassword = true"
-      (blur)="mostrarReglasPassword = false"
+      (blur)="ocultarReglasConDelay()"
       (input)="activarPassword()"
     />
 
-    <span class="toggle-password" (click)="mostrarPassword = !mostrarPassword">
-      <span class="material-symbols-outlined">
-        {{ mostrarPassword ? 'visibility_off' : 'visibility' }}
-      </span>
-    </span>
+<span 
+  class="toggle-password"
+  (mousedown)="$event.preventDefault()"
+  (click)="togglePassword()">
+
+  <span class="material-symbols-outlined">
+    {{ mostrarPassword ? 'visibility_off' : 'visibility' }}
+  </span>
+
+</span>
   </div>
 
   <div class="password-rules" *ngIf="mostrarReglasPassword">
