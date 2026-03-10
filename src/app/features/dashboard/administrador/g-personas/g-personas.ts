@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { PersonaService } from '../../../../core/services/persona.service';
 import { Persona } from '../../../../core/models/persona.model';
+import { HostListener } from '@angular/core';
 
 import {
   FormBuilder,
@@ -40,6 +41,9 @@ export class GPersonasComponent implements OnInit {
   mostrarReglasPassword = false;
   fechaMaxima: string = new Date().toISOString().split('T')[0];
   tipoInputPassword: string = 'text';
+  usuarioAEliminar: Persona | null = null;
+  mostrarModalEliminar = false;
+  eliminando = false;
 
   constructor(
     private personaService: PersonaService,
@@ -225,10 +229,34 @@ private manejarErrorBackend(err: any) {
     }
   }
 
-  eliminarUsuario(id: number) {
-    this.personaService.eliminar(id).subscribe(() => this.cargarUsuarios());
-  }
+    abrirModalEliminar(usuario: Persona) {
+      this.usuarioAEliminar = usuario;
+      this.mostrarModalEliminar = true;
+    }
 
+    cerrarModalEliminar() {
+      if (this.eliminando) return;
+      this.mostrarModalEliminar = false;
+      this.usuarioAEliminar = null;
+    }
+
+    confirmarEliminarUsuario() {
+      if (!this.usuarioAEliminar) return;
+
+      this.eliminando = true;
+
+      this.personaService.eliminar(this.usuarioAEliminar.id).subscribe({
+        next: () => {
+          this.eliminando = false;
+          this.cerrarModalEliminar();
+          this.cargarUsuarios();
+        },
+        error: (err) => {
+          this.eliminando = false;
+          console.error(err);
+        }
+      });
+    }
   private mayorEdadSiAdminOMeseroValidator(group: AbstractControl): ValidationErrors | null {
     const rol = group.get('rol')?.value;
     const fecha = group.get('fechaNacimiento')?.value;
@@ -310,6 +338,17 @@ activarPassword() {
 togglePassword() {
   this.mostrarPassword = !this.mostrarPassword;
   this.tipoInputPassword = this.mostrarPassword ? 'text' : 'password';
+}
+
+@HostListener('document:click', ['$event'])
+clickFuera(event: Event) {
+
+  const target = event.target as HTMLElement;
+
+  if (!target.closest('.menu-acciones')) {
+    this.menuAbierto = null;
+  }
+
 }
 
 }

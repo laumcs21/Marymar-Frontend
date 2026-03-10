@@ -37,6 +37,15 @@
       </span>
 
     </div>
+    
+    <div class="captcha-container">
+      <re-captcha
+        #captchaRef
+        [siteKey]="siteKey"
+        (resolved)="captchaResuelto($event)"
+        (expired)="resetCaptcha()">
+      </re-captcha>
+      </div>
 
       <button type="submit" class="btn-primary">
         Ingresar

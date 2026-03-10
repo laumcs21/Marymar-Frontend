@@ -76,7 +76,8 @@
        class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
     <div *ngFor="let prod of productos"
-         class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+         class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+         (click)="verProducto(prod)">
 
       <div class="h-48 bg-slate-200 bg-cover bg-center"
         [style.backgroundImage]="'url(' + (prod.imagenPrincipal || 'assets/no-image.png') + ')'">
@@ -101,7 +102,8 @@
             [ngClass]="prod.activo ? 
               'bg-green-100 text-green-700' : 
               'bg-slate-100 text-slate-600'"
-            class="px-2.5 py-1 rounded-full text-xs font-semibold">
+            class="px-2.5 py-1 rounded-full text-xs font-semibold"
+            (click)="$event.stopPropagation()">
 
             {{ prod.activo ? 'Disponible' : 'No Disponible' }}
           </span>
@@ -109,13 +111,13 @@
           <div class="flex gap-2">
 
             <button
-              (click)="editarProducto(prod)"
+              (click)="editarProducto(prod); $event.stopPropagation()"
               class="p-2 text-slate-400 hover:text-primary transition-colors">
               <span class="material-symbols-outlined">edit</span>
             </button>
 
             <button
-              (click)="toggleDisponibilidad(prod)"
+              (click)="toggleDisponibilidad(prod); $event.stopPropagation()"
               class="p-2 text-slate-400 hover:text-amber-500 transition-colors">
               <span class="material-symbols-outlined">
                 {{ prod.activo ? 'visibility_off' : 'visibility' }}
@@ -123,7 +125,7 @@
             </button>
 
             <button
-              (click)="eliminarDefinitivo(prod.id)"
+              (click)="abrirModalEliminar(prod); $event.stopPropagation()"
               class="p-2 text-slate-400 hover:text-red-500 transition-colors">
               <span class="material-symbols-outlined">delete</span>
             </button>
@@ -312,7 +314,7 @@
 
             <button
             type="button"
-            (click)="previews.splice(i,1); imagenesSeleccionadas.splice(i,1)"
+            (click)="eliminarImagen(i)"
             class="absolute -top-2 -right-2 
                     bg-red-500 text-white 
                     rounded-full w-5 h-5 text-xs">
@@ -347,4 +349,88 @@
 
   </div>
 
+</div>
+
+<div *ngIf="mostrarModalVista"
+     class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+     (click)="cerrarModalVista()">
+
+  <div class="bg-white rounded-xl max-w-lg w-full p-6"
+       (click)="$event.stopPropagation()">
+
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-lg font-bold">
+        {{ productoVista?.nombre }}
+      </h2>
+
+      <button type="button" (click)="cerrarModalVista()">
+        ✖
+      </button>
+    </div>
+
+    <div class="h-48 bg-slate-100 flex items-center justify-center">
+      <img
+        [src]="productoVista?.imagenPrincipal || 'assets/no-image.png'"
+        class="w-full h-full object-contain pointer-events-none" />
+    </div>
+
+    <p class="text-gray-700 mt-2 mb-4">
+      {{ productoVista?.descripcion }}
+    </p>
+
+    <div class="mt-4 text-primary font-bold">
+      ${{ productoVista?.precio }}
+    </div>
+  </div>
+</div>
+
+<div *ngIf="mostrarModalEliminar"
+     class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+     (click)="cerrarModalEliminar()">
+
+  <div class="bg-white rounded-2xl w-full max-w-md shadow-2xl border border-slate-200 overflow-hidden"
+       (click)="$event.stopPropagation()">
+
+    <div class="px-6 py-5 border-b border-slate-200 bg-slate-50 flex items-center gap-3">
+      <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+        <span class="material-symbols-outlined text-red-500">delete</span>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-bold text-slate-800">
+          Eliminar producto
+        </h3>
+        <p class="text-sm text-slate-500">
+          Esta acción no se puede deshacer
+        </p>
+      </div>
+    </div>
+
+    <div class="px-6 py-5">
+      <p class="text-slate-700 leading-relaxed">
+        ¿Seguro que deseas eliminar el producto
+        <span class="font-semibold text-slate-900">
+          "{{ productoAEliminar?.nombre }}"
+        </span>?
+      </p>
+    </div>
+
+    <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-end gap-3">
+      <button type="button"
+              (click)="cerrarModalEliminar()"
+              [disabled]="eliminando"
+              class="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-600 font-semibold hover:bg-slate-100 transition disabled:opacity-50">
+        Cancelar
+      </button>
+
+      <button type="button"
+              (click)="confirmarEliminarProducto()"
+              [disabled]="eliminando"
+              class="px-5 py-2.5 rounded-lg bg-red-500 text-white font-semibold hover:bg-red-600 transition disabled:opacity-50 flex items-center gap-2">
+        <span class="material-symbols-outlined text-sm">delete</span>
+        {{ eliminando ? 'Eliminando...' : 'Sí, eliminar' }}
+      </button>
+    </div>
+
+  </div>
 </div>

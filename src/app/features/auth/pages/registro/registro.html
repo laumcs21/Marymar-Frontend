@@ -159,6 +159,21 @@
           class="error">
         Debes aceptar la política de tratamiento de datos.
       </div>
+
+      <div class="captcha-container">
+      <re-captcha
+        #captchaRef
+        [siteKey]="siteKey"
+        (resolved)="onCaptchaResolved($event)"
+        (expired)="resetCaptcha()">
+      </re-captcha>
+    </div>
+
+    <div class="error"
+        *ngIf="(form.get('captcha')?.touched || formEnviado) && form.get('captcha')?.invalid">
+      Debe completar el captcha
+    </div>
+
       <!-- Botón Registrar -->
       <button type="submit" class="btn-primary">
         Registrarse

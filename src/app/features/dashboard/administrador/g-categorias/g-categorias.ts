@@ -20,6 +20,9 @@ export class GCategoriasComponent implements OnInit {
   categoriaEditandoId: number | null = null;
   terminoBusqueda: string = '';
   categoriasFiltradas: Categoria []=[];
+  categoriaAEliminar: Categoria | null = null;
+  mostrarModalEliminar = false;
+  eliminando = false;
 
   constructor(
     private categoriaService: CategoriaService,
@@ -75,12 +78,35 @@ cargarCategorias() {
     }
   }
 
-  eliminar(id: number) {
-    if (!confirm('¿Eliminar categoría?')) return;
+abrirModalEliminar(cat: Categoria) {
+  this.categoriaAEliminar = cat;
+  this.mostrarModalEliminar = true;
+}
 
-    this.categoriaService.eliminar(id)
-      .subscribe(() => this.cargarCategorias());
-  }
+cerrarModalEliminar() {
+  if (this.eliminando) return;
+  this.mostrarModalEliminar = false;
+  this.categoriaAEliminar = null;
+}
+
+confirmarEliminarCategoria() {
+
+  if (!this.categoriaAEliminar) return;
+
+  this.eliminando = true;
+
+  this.categoriaService.eliminar(this.categoriaAEliminar.id)
+    .subscribe({
+      next: () => {
+        this.eliminando = false;
+        this.cerrarModalEliminar();
+        this.cargarCategorias();
+      },
+      error: () => {
+        this.eliminando = false;
+      }
+    });
+}
 
   cerrarModal() {
     this.mostrarModal = false;

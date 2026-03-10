@@ -1,6 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormsModule } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+  FormsModule
+} from '@angular/forms';
 
 import { ProductoService } from '../../../../core/services/producto.service';
 import { CategoriaService } from '../../../../core/services/categoria.service';
@@ -18,6 +24,7 @@ import { Categoria } from '../../../../core/models/categoria.model';
 export class GProductosComponent implements OnInit {
 
   productos: Producto[] = [];
+  productosOriginales: Producto[] = [];
   categorias: Categoria[] = [];
 
   mostrarModal = false;
@@ -25,13 +32,18 @@ export class GProductosComponent implements OnInit {
   productoEditandoId: number | null = null;
   categoriaSeleccionada: number | null = null;
 
-  imagenesSeleccionadas: File[]=[];
-  previews: string []=[];
+  imagenesSeleccionadas: File[] = [];
+  previews: string[] = [];
 
-  terminoBusqueda: string = '';
-  productosOriginales: Producto[] = [];
+  terminoBusqueda = '';
+
+  productoAEliminar: Producto | null = null;
+  mostrarModalEliminar = false;
+  eliminando = false;
 
   form!: FormGroup;
+  productoVista: Producto | null = null;
+  mostrarModalVista = false;
 
   constructor(
     private productoService: ProductoService,
@@ -39,9 +51,6 @@ export class GProductosComponent implements OnInit {
     private fb: FormBuilder
   ) {}
 
-  // =========================
-  // INIT
-  // =========================
   ngOnInit(): void {
     this.form = this.fb.group({
       nombre: ['', Validators.required],
@@ -54,35 +63,71 @@ export class GProductosComponent implements OnInit {
     this.cargarProductos();
   }
 
-  // =========================
-  // CARGAS
-  // =========================
-  cargarCategorias() {
+  trackById(index: number, item: Producto): number {
+    return item.id;
+  }
+
+  verProducto(prod: Producto): void {
+    this.productoVista = prod;
+    this.mostrarModalVista = true;
+  }
+
+  cerrarModalVista(): void {
+    this.mostrarModalVista = false;
+    this.productoVista = null;
+  }
+
+  cargarCategorias(): void {
     this.categoriaService.obtenerTodas().subscribe({
       next: (data) => this.categorias = data
     });
   }
 
-  cargarProductos() {
+  cargarProductos(): void {
     this.productoService.obtenerTodos().subscribe({
-      next: (data) => {this.productos = data;
-      this.productosOriginales = data;}
+      next: (data) => {
+        this.productosOriginales = data;
+        this.aplicarFiltros();
+      }
     });
   }
 
-  // =========================
-  // MODAL
-  // =========================
-  abrirModalCrear() {
+  aplicarFiltros(): void {
+    let lista = [...this.productosOriginales];
+
+    if (this.categoriaSeleccionada) {
+      lista = lista.filter(p => p.categoriaId === this.categoriaSeleccionada);
+    }
+
+    const termino = this.terminoBusqueda.toLowerCase().trim();
+    if (termino) {
+      lista = lista.filter(p =>
+        p.nombre.toLowerCase().includes(termino)
+      );
+    }
+
+    this.productos = lista;
+  }
+
+  filtrarPorCategoria(id: number | null): void {
+    this.categoriaSeleccionada = id;
+    this.aplicarFiltros();
+  }
+
+  buscarProductos(): void {
+    this.aplicarFiltros();
+  }
+
+  abrirModalCrear(): void {
     this.modoEdicion = false;
     this.productoEditandoId = null;
     this.form.reset();
     this.imagenesSeleccionadas = [];
     this.previews = [];
-        this.mostrarModal = true;
+    this.mostrarModal = true;
   }
 
-  editarProducto(prod: Producto) {
+  editarProducto(prod: Producto): void {
     this.modoEdicion = true;
     this.productoEditandoId = prod.id;
     this.mostrarModal = true;
@@ -94,14 +139,15 @@ export class GProductosComponent implements OnInit {
       categoriaId: prod.categoriaId
     });
 
+    this.imagenesSeleccionadas = [];
     this.previews = [];
 
     if (prod.imagenPrincipal) {
       this.previews.push(prod.imagenPrincipal);
-    } 
-   }
+    }
+  }
 
-  cerrarModal() {
+  cerrarModal(): void {
     this.mostrarModal = false;
     this.form.reset();
     this.modoEdicion = false;
@@ -110,10 +156,7 @@ export class GProductosComponent implements OnInit {
     this.previews = [];
   }
 
-  // =========================
-  // GUARDAR (CREATE + UPDATE)
-  // =========================
-  guardar() {
+  guardar(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -132,115 +175,88 @@ export class GProductosComponent implements OnInit {
       new Blob([JSON.stringify(payload)], { type: 'application/json' })
     );
 
-    this.imagenesSeleccionadas.forEach(img => {
-      formData.append('imagenes', img);
-    });
+    if (this.imagenesSeleccionadas.length > 0) {
+      this.imagenesSeleccionadas.forEach(img => {
+        formData.append('imagenes', img);
+      });
+    }
 
     if (this.modoEdicion && this.productoEditandoId) {
-
       this.productoService.actualizar(this.productoEditandoId, formData).subscribe({
-      next: () => {
-        if (this.categoriaSeleccionada) {
-          this.filtrarPorCategoria(this.categoriaSeleccionada);
-        } else {
+        next: () => {
+          this.cerrarModal();
           this.cargarProductos();
         }
-        this.cerrarModal();
-      }
       });
-
     } else {
-
       this.productoService.crear(formData).subscribe({
         next: () => {
-          this.cargarProductos();
           this.cerrarModal();
+          this.cargarProductos();
         }
       });
-
     }
   }
 
-  // =========================
-  // ELIMINAR
-  // =========================
-  eliminarDefinitivo(id: number) {
-    if (!confirm('Eliminar permanentemente este producto?')) return;
-
-    this.productoService.eliminar(id).subscribe({
-    next: () => {
-      if (this.categoriaSeleccionada) {
-        this.filtrarPorCategoria(this.categoriaSeleccionada);
-      } else {
-        this.cargarProductos();
-      }
-      this.cerrarModal();
-    }   
-   });
-  }
-
-  // =========================
-  // FILTRO
-  // =========================
-  filtrarPorCategoria(id: number | null) {
-
-    this.categoriaSeleccionada = id;
-
-    if (!id) {
-      this.cargarProductos();
-      return;
-    }
-
-    this.productoService.obtenerPorCategoria(id).subscribe({
-      next: (data) => this.productos = data,
-      error: (err) => console.error('Error filtrando productos', err)
-    });
-  }
-
-  // =========================
-  // IMAGEN
-  // =========================
-onFileSelected(event: any) {
-
-  const files: FileList = event.target.files;
-  if (!files) return;
-
-  for (let i = 0; i < files.length; i++) {
-
-    const file = files[i];
-
-    this.imagenesSeleccionadas.push(file);
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      this.previews.push(reader.result as string);
-    };
-
-    reader.readAsDataURL(file);
-  }
+abrirModalEliminar(prod: Producto): void {
+  this.productoAEliminar = prod;
+  this.mostrarModalEliminar = true;
 }
 
-  // =========================
-  // DISPONIBILIDAD
-  // =========================
-  toggleDisponibilidad(prod: Producto) {
+cerrarModalEliminar(): void {
+  if (this.eliminando) return;
+  this.mostrarModalEliminar = false;
+  this.productoAEliminar = null;
+}
 
+confirmarEliminarProducto(): void {
+  if (!this.productoAEliminar) return;
+
+  this.eliminando = true;
+
+  this.productoService.eliminar(this.productoAEliminar.id).subscribe({
+    next: () => {
+      this.eliminando = false;
+      this.cerrarModalEliminar();
+      this.cargarProductos();
+    },
+    error: () => {
+      this.eliminando = false;
+    }
+  });
+}
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const files = input.files;
+    if (!files) return;
+
+    this.imagenesSeleccionadas = [];
+    this.previews = [];
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      this.imagenesSeleccionadas.push(file);
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.previews.push(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  eliminarImagen(index: number): void {
+    this.previews.splice(index, 1);
+
+    if (index < this.imagenesSeleccionadas.length) {
+      this.imagenesSeleccionadas.splice(index, 1);
+    }
+  }
+
+  toggleDisponibilidad(prod: Producto): void {
     this.productoService.desactivar(prod.id).subscribe({
       next: () => this.cargarProductos()
     });
   }
-
-  buscarProductos() {
-
-  const termino = this.terminoBusqueda.toLowerCase().trim();
-
-  if (!termino) {
-    this.productos = this.productosOriginales;
-    return;
-  }
-
-  this.productos = this.productosOriginales.filter(p =>
-    p.nombre.toLowerCase().includes(termino)
-  );
-}
 }

@@ -32,6 +32,8 @@ export class VerifyCode implements OnInit, OnDestroy {
   loadingResend = false;
   private timeLeft: number = 300;
   private interval: any;
+  message: string = '';
+ errorMessage: string = '';
 
   constructor(
     private auth: AuthService,
@@ -118,7 +120,7 @@ export class VerifyCode implements OnInit, OnDestroy {
           }
         },
         error: () => {
-          alert('Código incorrecto');
+          this.errorMessage = 'Código incorrecto';
         }
       });
 
@@ -144,26 +146,29 @@ resendCode() {
 
   this.loadingResend = true;
 
-  this.auth.resendCode(email).subscribe({
-    next: () => {
+this.auth.resendCode(email).subscribe({
+  next: () => {
 
-      this.form.reset();
+    this.form.reset();
 
-      clearInterval(this.interval);
-      this.startTimer();
+    clearInterval(this.interval);
+    this.startTimer();
 
-      this.expired = false;
-      this.loadingResend = false;
+    this.expired = false;
+    this.loadingResend = false;
 
-      alert('Nuevo código enviado');
-    },
-    error: (err) => {
-      console.error(err); 
-      this.loadingResend = false;
-      alert('Error al reenviar');
-    }
-  });
-  this.loadingResend = false;
+    this.message = 'Nuevo código enviado';
+    this.errorMessage = '';
+
+  },
+  error: () => {
+
+    this.loadingResend = false;
+
+    this.errorMessage = 'Error al reenviar el código';
+    this.message = '';
+  }
+});
 }
 
   // ==========================

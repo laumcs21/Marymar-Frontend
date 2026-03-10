@@ -5,4 +5,38 @@
   --soft-beige: #f4efe6;         /* fondo claro */
   --text-dark: #1f1f1f;
   --white: #ffffff;
+  --app-font-scale: 1;
+}
+
+html {
+  font-size: calc(16px * var(--app-font-scale));
+}
+
+body {
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+body.high-contrast {
+  background: #000000 !important;
+  color: #ffffff !important;
+}
+
+body.high-contrast * {
+  color: #ffffff !important;
+  border-color: #ffffff22 !important;
+}
+
+body.high-contrast input,
+body.high-contrast textarea,
+body.high-contrast select,
+body.high-contrast button,
+body.high-contrast .card,
+body.high-contrast .container,
+body.high-contrast .form-container {
+  background: #111111 !important;
+  color: #ffffff !important;
+}
+
+body.high-contrast a {
+  color: #ffd60a !important;
 }

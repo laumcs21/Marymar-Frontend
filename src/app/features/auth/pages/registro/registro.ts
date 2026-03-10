@@ -3,15 +3,22 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractContro
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
 import { CommonModule } from '@angular/common';
+import { RecaptchaModule } from 'ng-recaptcha';
+import { environment } from '../../../../../environments/environment';
+import { ViewChild } from '@angular/core';
+import { RecaptchaComponent } from 'ng-recaptcha';
+
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, RecaptchaModule],
   templateUrl: './registro.html',
   styleUrls: ['./registro.css']
 })
 export class RegisterComponent implements OnInit {
+
+  @ViewChild('captchaRef') captcha!: RecaptchaComponent;
 
   form!: FormGroup;
   serverError: string | null = null;
@@ -24,7 +31,8 @@ export class RegisterComponent implements OnInit {
   cumpleNumero = false;
   cumpleSimbolo = false;
   tipoInputPassword: string = 'text';
-
+  siteKey = environment.recaptchaSiteKey;
+  captchaToken: string | null = null;
   fechaMaxima: string = new Date().toISOString().split('T')[0];
 
   constructor(
@@ -32,6 +40,11 @@ export class RegisterComponent implements OnInit {
     private router: Router,
     private authService: AuthService
   ) {}
+
+  onCaptchaResolved(token: string | null) {
+  this.captchaToken = token;
+  this.form.get('captcha')?.setValue(token);
+}
 
   ngOnInit(): void {
 
@@ -49,7 +62,8 @@ export class RegisterComponent implements OnInit {
         [Validators.required, this.fechaNoFuturaValidator]
       ],
       direccionEnvio: ['', Validators.required],
-      aceptaHabeasData: [false, Validators.requiredTrue]
+      aceptaHabeasData: [false, Validators.requiredTrue],
+      captcha: ['', Validators.required]
     });
 
     this.form.get('contrasena')?.valueChanges.subscribe(valor => {
@@ -84,42 +98,48 @@ registrar() {
     return;
   }
 
+  console.log("TOKEN CAPTCHA FRONT:", this.captchaToken);
   const payload = {
     ...this.form.value,
-    rol: 'CLIENTE'
+    rol: 'CLIENTE',
+    captchaToken: this.captchaToken
   };
 
   this.authService.registro(payload).subscribe({
+
     next: () => {
       this.router.navigate(['/login']);
     },
-error: (err) => {
-console.log(err);
-  let mensaje = '';
 
-  if (err.error) {
-    if (typeof err.error === 'string') {
-      mensaje = err.error;
-    } else if (err.error.message) {
-      mensaje = err.error.message;
+    error: (err) => {
+      this.resetCaptcha();
+      console.log(err);
+
+      let mensaje = '';
+
+      if (err.error) {
+        if (typeof err.error === 'string') {
+          mensaje = err.error;
+        } else if (err.error.message) {
+          mensaje = err.error.message;
+        }
+      }
+
+      mensaje = mensaje || 'Error al registrar usuario';
+
+      if (mensaje.toLowerCase().includes('correo')) {
+        this.form.get('email')?.setErrors({ duplicado: true });
+      }
+
+      if (mensaje.toLowerCase().includes('identificación')) {
+        this.form.get('numeroIdentificacion')?.setErrors({ duplicado: true });
+      }
+
+      this.serverError = mensaje;
     }
-  }
 
-  mensaje = mensaje || 'Error al registrar usuario';
-
-  if (mensaje.toLowerCase().includes('correo')) {
-    this.form.get('email')?.setErrors({ duplicado: true });
-  }
-
-  if (mensaje.toLowerCase().includes('identificación')) {
-    this.form.get('numeroIdentificacion')?.setErrors({ duplicado: true });
-  }
-
-  this.serverError = mensaje;
-}
   });
 }
-
   irALogin() {
     this.router.navigate(['/login']);
   }
@@ -166,5 +186,14 @@ ocultarReglasConDelay() {
   setTimeout(() => {
     this.mostrarReglasPassword = false;
   }, 150);
+}
+
+resetCaptcha() {
+  if (this.captcha) {
+    this.captcha.reset();
+  }
+
+  this.captchaToken = null;
+  this.form.get('captcha')?.reset();
 }
 }

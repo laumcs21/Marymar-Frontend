@@ -60,7 +60,7 @@ input:focus {
 
 .btn-primary {
   width: 100%;
-  padding: 12px;
+  padding: 11px;
   border-radius: 10px;
   border: none;
   background-color: var(--accent-orange);
@@ -72,7 +72,7 @@ input:focus {
 
 .btn-secondary {
   width: 100%;
-  padding: 12px;
+  padding: 11px;
   border-radius: 10px;
   border: none;
   background-color: #70878F;
@@ -96,7 +96,7 @@ input:focus {
 
 .google-btn {
   width: 100%;
-  padding: 12px;
+  padding: 11px;
   background-color: white;
   color: #444;
   border: 1px solid #ddd;
@@ -126,8 +126,8 @@ input:focus {
   color: #1c5d75;
   font-family: Georgia, 'Times New Roman', Times, serif;
   font-size: 14px;
-  margin-top: 20px;
-  margin-bottom: 9px;
+  margin-top: 18px;
+  margin-bottom: 7px;
 }
 
 .password-container {
@@ -185,4 +185,10 @@ margin-top: 15px;
 }
 .material-symbols-outlined{
   font-size: 18px;
+}
+
+.captcha-container{
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
 }

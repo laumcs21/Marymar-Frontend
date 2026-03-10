@@ -1,0 +1,20 @@
+<div class="accessibility-wrapper">
+  <button
+    class="accessibility-toggle"
+    type="button"
+    (click)="toggleMenu()"
+    aria-label="Abrir opciones de accesibilidad">
+    <span class="icon">♿</span>
+  </button>
+
+  <div class="accessibility-panel" *ngIf="open">
+    <div class="panel-header">
+      <h4>Accesibilidad</h4>
+    </div>
+
+    <button type="button" (click)="increaseText()">Aumentar texto</button>
+    <button type="button" (click)="decreaseText()">Disminuir texto</button>
+    <button type="button" (click)="toggleContrast()">Contraste alto</button>
+    <button type="button" (click)="reset()">Restablecer</button>
+  </div>
+</div>

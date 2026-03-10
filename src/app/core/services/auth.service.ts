@@ -15,8 +15,8 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  login(email: string, contrasena: string) {
-    return this.http.post<any>(`${this.apiUrl}/login`, { email, contrasena })
+  login(email: string, contrasena: string, captchaToken: string) {
+    return this.http.post<any>(`${this.apiUrl}/login`, { email, contrasena, captchaToken })
       .pipe(
         tap(res => {
           localStorage.setItem('token', res.token);
@@ -58,7 +58,7 @@ export class AuthService {
 }
 
 resendCode(email: string) {
-  return this.http.post<any>(`${environment.apiUrl}/resend-code`, {
+  return this.http.post<any>(`${this.apiUrl}/resend-code`, {
     email: email
   });
 }
