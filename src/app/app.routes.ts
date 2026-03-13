@@ -71,6 +71,12 @@ export const routes: Routes = [
       loadComponent: () =>
         import('./features/dashboard/administrador/g-productos/g-productos')
           .then(m => m.GProductosComponent)
+    },
+        {
+      path: 'g-inventario',
+      loadComponent: () =>
+        import('./features/dashboard/administrador/g-inventario/g-inventario')
+          .then(m => m.GInventarioComponent)
     }
   ]
 },

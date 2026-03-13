@@ -1,0 +1,397 @@
+<div class="inventario-container">
+
+  <div class="header-inventario">
+
+    <h1 class="text-3xl font-bold text-primary">Gestión de Inventario</h1>
+
+    <div class="acciones">
+
+      <button class="btn-primary" (click)="abrirModalInsumo()">
+        Gestionar insumos
+      </button>
+
+      <button class="btn-primary" (click)="abrirModalInventario()">
+        Registrar inventario
+      </button>
+
+    </div>
+
+  </div>
+
+  <div class="card">
+
+    <h3>Inventario</h3>
+
+    <table>
+
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>INSUMO</th>
+          <th>UNIDAD</th>
+          <th>STOCK</th>
+          <th>ACCIONES</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <tr *ngFor="let item of inventario">
+
+          <td>{{ item.id }}</td>
+          <td>{{ item.insumoNombre }}</td>
+          <td>{{ item.unidad }}</td>
+          <td>{{ item.stock }}</td>
+
+          <td>
+
+            <button
+              (click)="abrirEditarStock(item)"
+              class="text-blue-600 hover:text-blue-800 transition-colors"
+              title="Editar">
+
+              <span class="material-symbols-outlined">edit</span>
+
+            </button>
+
+            <button
+              (click)="abrirModalEliminar(item)"
+              class="text-red-600 hover:text-red-800 transition-colors"
+              title="Eliminar">
+
+              <span class="material-symbols-outlined">delete</span>
+
+            </button>
+
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>
+
+<!-- MODAL GESTIONAR INSUMOS -->
+<div class="modal" *ngIf="modalInsumo">
+
+  <div class="modal-content modal-insumos">
+    <div class="modal-header-insumos">
+
+<h3>Gestión de insumos</h3>
+
+    <div class="acciones-header">
+      <button class="btn-primary" (click)="abrirCrearInsumo()">
+        Nuevo insumo
+      </button>
+
+      <button class="btn-cancel" (click)="cerrarModalInsumo()">
+        Cerrar
+      </button>
+    </div>
+    </div>
+
+    <!-- FORMULARIO (SOLO CUANDO CREAR O EDITAR) -->
+    <div *ngIf="modoFormulario !== null">
+
+      <input
+        type="text"
+        placeholder="Nombre del insumo"
+        [(ngModel)]="nuevoInsumo.nombre"
+      />
+
+      <input
+        type="text"
+        placeholder="Unidad (kg, litros, unidad...)"
+        [(ngModel)]="nuevoInsumo.unidad"
+      />
+
+      <p class="error-text" *ngIf="errorInsumo">
+        {{ errorInsumo }}
+      </p>
+
+      <div class="modal-buttons">
+
+        <button class="btn-primary" (click)="guardarInsumo()">
+          {{ modoFormulario === 'editar' ? 'Actualizar' : 'Crear' }}
+        </button>
+
+        <button class="btn-cancel" (click)="cancelarFormularioInsumo()">
+          Cancelar
+        </button>
+
+      </div>
+
+      <hr>
+
+    </div>
+
+    <!-- TABLA INSUMOS -->
+    <div class="tabla-container">
+
+    <table class="tabla-insumos">
+
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>NOMBRE</th>
+          <th>UNIDAD</th>
+          <th>ACCIONES</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <tr *ngFor="let insumo of insumos">
+          <td>{{ insumo.id }}</td>
+          <td>{{ insumo.nombre }}</td>
+          <td>{{ insumo.unidad }}</td>
+
+          <td class="acciones-tabla">
+
+            <button (click)="editarInsumo(insumo)">
+              <span class="material-symbols-outlined">edit</span>
+            </button>
+
+            <button (click)="abrirModalEliminarInsumo(insumo)">
+              <span class="material-symbols-outlined">delete</span>
+            </button>
+
+          </td>
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+  </div>
+    </div>
+
+<!-- MODAL REGISTRAR INVENTARIO -->
+<div class="modal" *ngIf="modalInventario">
+
+  <div class="modal-content">
+
+    <h3>Registrar inventario</h3>
+
+    <select [(ngModel)]="nuevoInventario.insumoId">
+
+      <option [ngValue]="0">Seleccionar insumo</option>
+
+      <option *ngFor="let i of insumos" [ngValue]="i.id">
+        {{ i.nombre }}
+      </option>
+
+    </select>
+
+    <input
+      type="number"
+      min="0";
+      placeholder="Stock"
+      [(ngModel)]="nuevoInventario.stock"
+    />
+
+    <p class="error-text" *ngIf="errorInventario">
+         {{ errorInventario }}
+    </p>
+
+    <div class="modal-buttons">
+
+      <button class="btn-primary" (click)="crearInventario()">
+        Registrar
+      </button>
+
+      <button class="btn-cancel" (click)="cerrarModal()">
+        Cancelar
+      </button>
+
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- MODAL EDITAR STOCK -->
+<div class="modal" *ngIf="modalEditarStock">
+
+  <div class="modal-content">
+
+    <h3>Editar stock</h3>
+
+    <p>
+      <strong>{{ inventarioSeleccionado?.insumoNombre }}</strong>
+    </p>
+
+    <input
+      type="number"
+      min="0";
+      [(ngModel)]="stockEditando"
+    />
+
+    <div class="modal-buttons">
+
+      <button class="btn-primary" (click)="guardarStock()">
+        Guardar
+      </button>
+
+      <button class="btn-cancel" (click)="cerrarModalEditarStock()">
+        Cancelar
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<div *ngIf="mostrarModalEliminar"
+     class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[3000] p-4"
+     (click)="cerrarModalEliminar()">
+
+  <div class="bg-white rounded-2xl w-full max-w-md shadow-2xl border border-slate-200 overflow-hidden"
+       (click)="$event.stopPropagation()">
+
+    <!-- HEADER -->
+    <div class="px-6 py-5 border-b border-slate-200 bg-slate-50 flex items-center gap-3">
+
+      <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+        <span class="material-symbols-outlined text-red-500">
+          delete
+        </span>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-bold text-slate-800">
+          Eliminar inventario
+        </h3>
+        <p class="text-sm text-slate-500">
+          Esta acción no se puede deshacer
+        </p>
+      </div>
+
+    </div>
+
+    <!-- BODY -->
+    <div class="px-6 py-5">
+
+      <p class="text-slate-700 leading-relaxed">
+
+        ¿Seguro que deseas eliminar del inventario el 
+
+        <span class="font-semibold text-slate-900">
+          "{{ inventarioAEliminar?.insumoNombre }}"
+        </span>?
+
+      </p>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-end gap-3">
+
+      <button type="button"
+              (click)="cerrarModalEliminar()"
+              [disabled]="eliminando"
+              class="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-600 font-semibold hover:bg-slate-100 transition disabled:opacity-50">
+        Cancelar
+      </button>
+
+      <button type="button"
+              (click)="eliminarInventario(inventarioAEliminar!.id)"
+              [disabled]="eliminando"
+              class="px-5 py-2.5 rounded-lg bg-red-500 text-white font-semibold hover:bg-red-600 transition disabled:opacity-50 flex items-center gap-2">
+
+        <span class="material-symbols-outlined text-sm">
+          delete
+        </span>
+
+        {{ eliminando ? 'Eliminando...' : 'Sí, eliminar' }}
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+<!-- Modal eliminar insumo-->
+
+<div *ngIf="mostrarModalEliminarInsumo"
+     class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[3000] p-4"
+     (click)="cerrarModalEliminarInsumo()">
+
+  <div class="bg-white rounded-2xl w-full max-w-md shadow-2xl border border-slate-200 overflow-hidden"
+       (click)="$event.stopPropagation()">
+
+    <!-- HEADER -->
+    <div class="px-6 py-5 border-b border-slate-200 bg-slate-50 flex items-center gap-3">
+
+      <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+        <span class="material-symbols-outlined text-red-500">
+          delete
+        </span>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-bold text-slate-800">
+          Eliminar insumo
+        </h3>
+        <p class="text-sm text-slate-500">
+          Esta acción no se puede deshacer
+        </p>
+      </div>
+
+    </div>
+
+    <!-- BODY -->
+    <div class="px-6 py-5">
+
+      <p class="text-slate-700 leading-relaxed">
+
+        ¿Seguro que deseas eliminar el insumo 
+
+        <span class="font-semibold text-slate-900">
+          "{{ insumoAEliminar?.nombre }}"
+        </span>?
+
+      </p>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-end gap-3">
+
+      <button type="button"
+              (click)="cerrarModalEliminarInsumo()"
+              [disabled]="eliminando"
+              class="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-600 font-semibold hover:bg-slate-100 transition disabled:opacity-50">
+        Cancelar
+      </button>
+
+      <button type="button"
+              (click)="eliminarInsumo()"
+              [disabled]="eliminando"
+              class="px-5 py-2.5 rounded-lg bg-red-500 text-white font-semibold hover:bg-red-600 transition disabled:opacity-50 flex items-center gap-2">
+
+        <span class="material-symbols-outlined text-sm">
+          delete
+        </span>
+
+        {{ eliminando ? 'Eliminando...' : 'Sí, eliminar' }}
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
