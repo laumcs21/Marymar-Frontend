@@ -117,6 +117,16 @@
             </button>
 
             <button
+              (click)="abrirModalReceta(prod); $event.stopPropagation()"
+              class="p-2 text-slate-400 hover:text-green-600 transition-colors">
+
+              <span class="material-symbols-outlined">
+              restaurant_menu
+              </span>
+
+            </button>
+
+            <button
               (click)="toggleDisponibilidad(prod); $event.stopPropagation()"
               class="p-2 text-slate-400 hover:text-amber-500 transition-colors">
               <span class="material-symbols-outlined">
@@ -433,4 +443,236 @@
     </div>
 
   </div>
+</div>
+
+<!-- MODAL RECETA -->
+
+<div *ngIf="mostrarModalReceta"
+class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+(click)="cerrarModalReceta()">
+
+<div class="bg-white rounded-xl w-full max-w-lg shadow-2xl border border-slate-200 overflow-hidden"
+(click)="$event.stopPropagation()">
+
+<!-- HEADER -->
+<div class="px-6 py-5 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+
+<h3 class="text-lg font-bold">
+Receta de {{ productoReceta?.nombre }}
+</h3>
+
+<button (click)="cerrarModalReceta()">
+<span class="material-symbols-outlined">close</span>
+</button>
+
+</div>
+
+<!-- BODY -->
+
+<div class="p-6">
+
+  <!-- FILA INPUTS -->
+  <div class="flex items-center gap-2 mb-4">
+
+    <select [(ngModel)]="nuevoInsumoReceta.insumoId"
+    class="border rounded-lg px-3 py-2 flex-1">
+
+      <option [ngValue]="0">Seleccionar insumo</option>
+
+      <option *ngFor="let i of insumos" [ngValue]="i.id">
+        {{i.nombre}}
+      </option>
+
+    </select>
+
+    <input
+    type="number"
+    min="1"
+    [(ngModel)]="nuevoInsumoReceta.cantidad"
+    (focus)="limpiarCantidad()"
+    class="border rounded-lg px-3 py-2 w-24"
+    />
+
+    <button
+    (click)="agregarInsumo()"
+    class="bg-primary text-white px-4 py-2 rounded-lg font-semibold">
+      Agregar
+    </button>
+
+    <button
+    (click)="cerrarModalReceta()"
+    class="bg-slate-200 text-slate-700 px-4 py-2 rounded-lg font-semibold hover:bg-slate-300">
+      Cerrar
+    </button>
+
+  </div>
+
+  <!-- ERROR -->
+  <div *ngIf="mensajeErrorReceta"
+  class="text-red-600 text-sm mb-4">
+    {{mensajeErrorReceta}}
+  </div>
+
+  <!-- TABLA -->
+  <table class="w-full text-sm">
+
+    <thead class="border-b">
+
+      <tr class="text-left">
+
+        <th class="py-2">INSUMO</th>
+        <th class="py-2">CANTIDAD</th>
+        <th class="py-2 text-center">ACCIONES</th>
+
+      </tr>
+
+    </thead>
+
+    <tbody>
+
+      <tr *ngFor="let r of receta" class="border-b">
+
+        <td class="py-2">
+          {{r.insumoNombre}}
+        </td>
+
+        <td class="py-2">
+          {{r.cantidad}}
+        </td>
+
+        <td class="py-2 flex justify-center gap-2">
+
+          <button
+          (click)="abrirEditarCantidad(r)"
+          class="text-blue-500">
+
+            <span class="material-symbols-outlined">
+              edit
+            </span>
+
+          </button>
+
+          <button
+          (click)="abrirEliminarInsumo(r)"
+          class="text-red-500">
+
+            <span class="material-symbols-outlined">
+              delete
+            </span>
+
+          </button>
+
+        </td>
+
+      </tr>
+
+    </tbody>
+
+  </table>
+
+</div>
+</div>
+
+</div>
+
+<div *ngIf="mostrarModalEditarCantidad"
+class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+(click)="cerrarEditarCantidad()">
+
+<div class="bg-white rounded-xl w-full max-w-md shadow-2xl border border-slate-200"
+(click)="$event.stopPropagation()">
+
+<div class="px-6 py-5 border-b bg-slate-50 flex justify-between">
+
+<h3 class="font-bold">Editar cantidad</h3>
+
+<button (click)="cerrarEditarCantidad()">
+<span class="material-symbols-outlined">close</span>
+</button>
+
+</div>
+
+<div class="p-6">
+
+<input
+type="number"
+[(ngModel)]="nuevaCantidad"
+min="1"
+class="border rounded-lg px-3 py-2 w-full"
+/>
+
+</div>
+
+  <div *ngIf="mensajeErrorActualizarReceta"
+  class="text-red-600 text-sm mb-4">
+    {{mensajeErrorActualizarReceta}}
+  </div>
+
+<div class="px-6 py-4 bg-slate-50 flex justify-end gap-3">
+
+<button
+(click)="cerrarEditarCantidad()"
+class="px-4 py-2 border rounded-lg">
+Cancelar
+</button>
+
+<button
+(click)="guardarNuevaCantidad()"
+class="px-4 py-2 bg-primary text-white rounded-lg">
+Guardar
+</button>
+</div>
+</div>
+</div>
+
+<div *ngIf="mostrarModalEliminarInsumo"
+class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+(click)="cerrarEliminarInsumo()">
+
+<div class="bg-white rounded-2xl w-full max-w-md shadow-2xl border border-slate-200"
+(click)="$event.stopPropagation()">
+
+<div class="px-6 py-5 border-b bg-slate-50 flex items-center gap-3">
+
+<div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-red-500">delete</span>
+</div>
+
+<div>
+<h3 class="text-lg font-bold">
+Eliminar insumo
+</h3>
+
+<p class="text-sm text-slate-500">
+Esta acción no se puede deshacer
+</p>
+</div>
+
+</div>
+
+<div class="px-6 py-5">
+<p>
+¿Eliminar el insumo
+<b>{{insumoEliminar?.insumoNombre}}</b>
+de la receta?
+</p>
+</div>
+
+<div class="px-6 py-4 bg-slate-50 flex justify-end gap-3">
+
+<button
+(click)="cerrarEliminarInsumo()"
+class="px-4 py-2 border rounded-lg">
+Cancelar
+</button>
+
+<button
+(click)="confirmarEliminarInsumo()"
+class="px-4 py-2 bg-red-500 text-white rounded-lg">
+Eliminar
+</button>
+
+</div>
+
+</div>
 </div>
