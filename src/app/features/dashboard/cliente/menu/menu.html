@@ -1,0 +1,179 @@
+<section class="p-8 max-w-7xl mx-auto">
+
+<!-- BUSCADOR -->
+
+<div class="mb-6 max-w-md">
+
+<div class="relative">
+
+<span class="material-symbols-outlined 
+absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+
+search
+
+</span>
+
+<input
+type="text"
+[(ngModel)]="terminoBusqueda"
+(input)="buscar()"
+placeholder="Buscar platos..."
+
+class="w-full h-11 pl-10 pr-4 rounded-lg border border-slate-200 focus:ring-2 focus:ring-primary">
+
+</div>
+
+</div>
+
+<!-- CATEGORIAS -->
+
+<div class="flex gap-2 overflow-x-auto mb-8">
+
+<button
+(click)="filtrarPorCategoria(null)"
+[class.bg-primary]="!categoriaSeleccionada"
+[class.text-white]="!categoriaSeleccionada"
+
+class="px-4 py-1.5 rounded-full bg-slate-100 text-sm font-medium">
+
+Todos
+
+</button>
+
+<button
+*ngFor="let cat of categorias"
+(click)="filtrarPorCategoria(cat.id)"
+[class.bg-primary]="categoriaSeleccionada === cat.id"
+[class.text-white]="categoriaSeleccionada === cat.id"
+
+class="px-4 py-1.5 rounded-full bg-slate-100 text-sm font-medium">
+
+{{cat.nombre}}
+
+</button>
+
+</div>
+
+<!-- GRID PRODUCTOS -->
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+<div
+*ngFor="let prod of productos"
+
+class="group flex flex-col overflow-hidden rounded-xl bg-white shadow-sm border hover:shadow-md transition cursor-pointer"
+
+(click)="verProducto(prod)">
+
+<div class="relative h-48 w-full overflow-hidden">
+
+<img
+[src]="prod.imagenPrincipal || 'assets/no-image.png'"
+class="h-full w-full object-cover group-hover:scale-110 transition-transform duration-500">
+
+</div>
+
+<div class="flex flex-col p-5">
+
+<div class="mb-2 flex justify-between">
+
+<h4 class="text-lg font-bold">
+
+{{prod.nombre}}
+
+</h4>
+
+<span class="font-bold text-primary">
+
+${{prod.precio}}
+
+</span>
+
+</div>
+
+<p class="text-sm text-slate-600 line-clamp-2 mb-4">
+
+{{prod.descripcion}}
+
+</p>
+
+<button (click)="agregarAlCarrito(prod)"
+class="flex w-full items-center justify-center gap-2 rounded-lg bg-accent py-3 font-bold text-white hover:bg-accent/90"
+
+(click)="$event.stopPropagation()">
+
+<span class="material-symbols-outlined">
+
+add_shopping_cart
+
+</span>
+
+Agregar al carrito
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<div *ngIf="mostrarModalVista"
+
+class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+
+(click)="cerrarModalVista()">
+
+<div
+class="bg-white rounded-xl max-w-lg w-full p-6"
+
+(click)="$event.stopPropagation()">
+
+<div class="flex justify-between items-center mb-4">
+
+<h2 class="text-lg font-bold">
+
+{{productoVista?.nombre}}
+
+</h2>
+
+<button (click)="cerrarModalVista()">
+
+✖
+
+</button>
+
+</div>
+
+<div class="h-64 bg-slate-100">
+
+<img
+[src]="productoVista?.imagenPrincipal || 'assets/no-image.png'"
+class="w-full h-full object-contain">
+
+</div>
+
+<p class="text-gray-700 mt-4">
+
+{{productoVista?.descripcion}}
+
+</p>
+
+<div class="mt-4 text-primary font-bold text-xl">
+
+${{productoVista?.precio}}
+
+</div>
+
+<button
+class="mt-6 w-full bg-accent text-white py-3 rounded-lg font-bold">
+
+Agregar al carrito
+
+</button>
+
+</div>
+
+</div>

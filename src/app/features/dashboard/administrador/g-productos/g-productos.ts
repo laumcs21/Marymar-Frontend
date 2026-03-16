@@ -61,7 +61,6 @@ export class GProductosComponent implements OnInit {
       descripcion: ['', Validators.required],
       categoriaId: [null, Validators.required],
       precio: [null, [Validators.required, Validators.min(0.01)]],
-      cantidad : [1, [Validators.required]]
     });
 
     this.cargarCategorias();

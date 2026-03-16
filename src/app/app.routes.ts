@@ -15,6 +15,8 @@ import { RegisterComponent } from './features/auth/pages/registro/registro';
 import { ForgotPasswordComponent } from './features/auth/pages/forgot-password/forgot-password';
 import { ResetPasswordComponent } from './features/auth/pages/reset-password/reset-password';
 import { PoliticaComponent } from './features/auth/pages/politica/politica';
+import { MenuComponent } from './features/dashboard/cliente/menu/menu';
+import { CarritoComponent } from './features/dashboard/cliente/carrito/carrito';
 
 export const routes: Routes = [
   {
@@ -54,6 +56,13 @@ export const routes: Routes = [
   canActivate: [adminGuard],
   runGuardsAndResolvers: 'always',
   children: [
+
+    {
+      path: '',
+      redirectTo: 'g-personas',
+      pathMatch: 'full'
+    },
+
     {
       path: 'g-personas',
       loadComponent: () =>
@@ -72,7 +81,7 @@ export const routes: Routes = [
         import('./features/dashboard/administrador/g-productos/g-productos')
           .then(m => m.GProductosComponent)
     },
-        {
+    {
       path: 'g-inventario',
       loadComponent: () =>
         import('./features/dashboard/administrador/g-inventario/g-inventario')
@@ -80,11 +89,29 @@ export const routes: Routes = [
     }
   ]
 },
-    {
+{
   path: 'dashboard/cliente',
   component: ClienteComponent,
-  canActivate: [ClienteGuard]
-  },
+  canActivate:[ClienteGuard],
+  children:[
+    {
+      path:'',
+      loadComponent:() =>
+        import('./features/dashboard/cliente/inicio/inicio')
+        .then(m => m.InicioComponent)
+    },
+    {
+      path:'menu',
+      component:MenuComponent
+    },
+    {
+      path:'carrito',
+      loadComponent:() =>
+        import('./features/dashboard/cliente/carrito/carrito')
+        .then(m => m.CarritoComponent)
+    }
+  ]
+},
     {
   path: 'dashboard/mesero',
   component: MeseroComponent,

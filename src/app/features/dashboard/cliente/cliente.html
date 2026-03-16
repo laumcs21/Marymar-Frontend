@@ -1,3 +1,98 @@
-<h2>Bienvenido Cliente</h2>
-<p>Tu rol es: {{ rol }}</p>
-<button (click)="logout()">Cerrar sesión</button>
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100">
+
+  <div class="flex flex-col min-h-screen">
+
+    <!-- HEADER -->
+<header class="fixed top-0 left-0 w-full z-50 flex items-center justify-between whitespace-nowrap border-b border-primary/10 bg-white px-6 md:px-20 py-4">
+      <!-- LOGO -->
+      <div class="flex items-center gap-3 text-primary">
+        <div class="size-8 flex items-center justify-center">
+          <img src="Logo.png" alt="Mar y Mar" class="logo">
+        </div>
+        <h2 class="text-xl font-black tracking-tight">MAR Y MAR</h2>
+      </div>
+
+      <!-- NAV -->
+      <nav class="hidden md:flex items-center gap-10">
+        <button (click)="irInicio()" class="text-primary hover:text-coral text-sm font-semibold uppercase">
+          Inicio
+        </button>
+
+        <button (click)="irMenu()" class="text-primary/70 hover:text-coral text-sm font-semibold uppercase">
+          Menú
+        </button>
+
+        <button class="text-primary/70 hover:text-coral text-sm font-semibold uppercase">
+          Nosotros
+        </button>
+
+        <button class="text-primary/70 hover:text-coral text-sm font-semibold uppercase">
+          Contacto
+        </button>
+      </nav>
+
+      <!-- CARRITO -->
+      <button (click)="irCarrito()" class="flex items-center gap-2 text-primary">
+
+        <span class="material-symbols-outlined">
+          shopping_cart
+        </span>
+
+        <span
+          class="ml-1 font-bold text-sm"
+          *ngIf="cantidadCarrito > 0">
+
+          {{ cantidadCarrito }}
+
+        </span>
+
+      </button>
+
+      <!-- PERFIL -->
+      <div class="flex items-center gap-4">
+
+        <div class="flex flex-col items-end mr-2 hidden sm:flex">
+          <span class="text-xs font-bold text-primary">Mi Perfil</span>
+          <span class="text-[10px] text-primary/60">Cliente Platino</span>
+        </div>
+
+        <div class="group relative">
+
+          <div
+            class="bg-center bg-cover rounded-full size-10 border-2 border-coral cursor-pointer"
+            style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB9rFoHJiz7sc7O-AL-fqR-6vaP0onLM2gEWnkOx7IS7u22REe_O2i0gC9Wct5eFGprjQvHSR1mO73MwjIE83IQgaIRGw7sXA0_D-7mxt87ddNqPqCdhGuZZxuXT9lW_zg_Ub_OVRbUpppoDR_dJL0kxPx0Y5Qitlj7QSDFnxLR3UgJc8h_7ZM-d4SdhKoFabeis-irG-XZkXfybog05g0IC9aBTNxBhhGqC8ghHc4i87x7TlPsRIisDxLUcBBfxjb0h-2QaK3If_to");'>
+          </div>
+
+          <!-- DROPDOWN -->
+          <div class="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-xl border border-primary/5 py-2 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-all">
+
+            <a class="flex items-center gap-2 px-4 py-2 text-sm text-primary hover:bg-soft-beige">
+              <span class="material-symbols-outlined text-sm">person</span>
+              Mi Perfil
+            </a>
+
+            <hr class="my-1 border-primary/5"/>
+
+            <button (click)="logout()" class="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 w-full text-left">
+              <span class="material-symbols-outlined text-sm">logout</span>
+              Cerrar Sesión
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </header>
+
+    <!-- CONTENIDO -->
+    <main class="pt-24">
+
+      <router-outlet></router-outlet>
+
+    </main>
+
+  </div>
+
+</div>

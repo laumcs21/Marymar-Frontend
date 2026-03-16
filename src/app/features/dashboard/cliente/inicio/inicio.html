@@ -1,0 +1,216 @@
+<main class="flex flex-col flex-1">
+      
+      <!-- 2. Hero Section -->
+      <section class="p-4 md:p-8">
+        <div
+          class="relative flex min-h-[520px] flex-col gap-6 bg-cover bg-center bg-no-repeat rounded-xl items-center justify-center p-8 text-center"
+          style='background-image: linear-gradient(rgba(15, 59, 77, 0.7) 0%, rgba(15, 59, 77, 0.4) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuAedQtmBL-ZmmvB_501a8aV7cMv6xlNJT3zIWj3zkzBou3FDsnZLgng33y4M9_9MswDoP6xJLOZLLPu8XtfTC8MUnh1ubo54JRTTZchSNsbbwrKhndMM_058ADPpclsDx9BuaDvicP8znNO-Jch9q9bRzeWJlAVOyv1OrI8622u54JOrGPZd4H7iPLEYH0mKT2WJHbWkO3pW92KiBtwS4ttouRfYSX0mB4o-TyRESBZvDvTM6bYZ02kk8qttQ_k53V504eN9QAj0Qg-");'>
+          <div class="flex flex-col gap-4 max-w-2xl">
+            <span class="text-coral font-bold tracking-[0.2em] uppercase text-sm">Gastronomía Costera</span>
+            <h1 class="text-white text-5xl md:text-7xl font-black leading-tight tracking-tight">
+              Sabores que emergen del océano
+            </h1>
+            <p class="text-white/90 text-lg md:text-xl font-light max-w-lg mx-auto leading-relaxed">
+              Una experiencia sensorial única, donde la frescura del mar se encuentra con la alta cocina.
+            </p>
+          </div>
+
+          <div class="flex flex-wrap gap-4 justify-center mt-4">
+            <button (click)="irMenu()" class="flex min-w-[160px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 px-8 bg-coral text-white text-base font-bold transition-transform hover:scale-105 active:scale-95 shadow-lg shadow-coral/20">
+              <span class="truncate">Ver Menú</span>
+            </button>
+
+            <button class="flex min-w-[160px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 px-8 bg-white/10 backdrop-blur-md border border-white/30 text-white text-base font-bold hover:bg-white/20">
+              <span class="truncate">Reservar Mesa</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Sección Menú/Productos -->
+      <section class="max-w-[1200px] mx-auto w-full py-12 px-6">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+          <div class="space-y-2">
+            <h2 class="text-primary text-3xl md:text-4xl font-black tracking-tight">Nuestros Platos Destacados</h2>
+            <div class="h-1 w-20 bg-coral rounded-full"></div>
+          </div>
+          <p class="text-primary/60 max-w-md">
+            Seleccionamos diariamente los mejores frutos del mar para garantizar una experiencia fresca y auténtica.
+          </p>
+        </div>
+
+        <div *ngIf="productosRandom.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">          
+        <div
+        *ngFor="let prod of productosRandom"
+        class="group flex flex-col gap-4 bg-white p-4 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer"
+        (click)="verProducto(prod)">
+
+        <div class="overflow-hidden rounded-lg aspect-[4/3]">
+
+        <div
+        class="w-full h-full bg-center bg-no-repeat bg-cover transition-transform duration-500 group-hover:scale-110"
+        [style.backgroundImage]="'url(' + (prod.imagenPrincipal || 'assets/no-image.png') + ')'">
+        </div>
+
+        </div>
+
+        <div class="flex justify-between items-start">
+
+        <div>
+        <h3 class="text-primary text-xl font-bold">
+        {{ prod.nombre }}
+        </h3>
+
+        <p class="text-primary/50 text-sm mt-1 line-clamp-2">
+        {{ prod.descripcion }}
+        </p>
+
+        </div>
+
+        <span class="text-coral font-bold text-lg">
+        ${{ prod.precio }}
+        </span>
+
+        </div>
+
+        <button
+        (click)="agregarAlCarrito(prod); $event.stopPropagation()"
+        class="w-full py-3 bg-soft-beige text-primary font-bold rounded-lg hover:bg-primary hover:text-white transition-colors flex items-center justify-center gap-2">
+
+        <span class="material-symbols-outlined">
+        shopping_cart
+        </span>        Agregar al carrito
+
+        </button>
+
+        </div>
+        </div>
+      </section>
+
+      <!-- 4. Sección 'Quiénes Somos' -->
+      <section class="bg-soft-beige py-20">
+        <div class="max-w-[1200px] mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div class="relative">
+            <div
+              class="aspect-square rounded-2xl overflow-hidden shadow-2xl relative z-10 bg-cover bg-center bg-no-repeat"
+              style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuArTX5QHbtG7Vusww3IPCkoYOEZpETIWlG07bl05c0DynIjav2-jDHZjardCKjgBjRLdMqWkPnKMeADnlV5vVY023Md3EosV7B0LxzF82CyrrXCKO09jNa40OraFqKVDrl8EftKJiIpcM-SV_8gDXIZMaPiVLeQsU3KVKiumU1MbMKtzh5O1dAuYAfFJpBU5jfe53RMOZDzUHOjkyRuLM5FTWzD1X8mehzsFfNpW-i9svZxI-yRmhZRTgFMXxk8dsjTei7vRjIxl5ct");'>
+            </div>
+            <div class="absolute -bottom-6 -right-6 w-64 h-64 bg-accent-blue rounded-2xl -z-0 opacity-20"></div>
+            <div class="absolute -top-6 -left-6 w-32 h-32 border-4 border-coral rounded-2xl -z-0"></div>
+          </div>
+
+          <div class="flex flex-col gap-6">
+            <span class="text-coral font-bold tracking-widest uppercase text-sm">Nuestra Tradición</span>
+            <h2 class="text-primary text-4xl md:text-5xl font-black leading-tight">Décadas honrando los secretos del mar</h2>
+
+            <p class="text-primary/70 text-lg leading-relaxed">
+              En Mar y Mar, nuestra historia comenzó hace más de 30 años en un pequeño puesto frente al puerto. Hoy, mantenemos esa misma esencia: el respeto absoluto por el producto y la calidez de sentirte como en casa.
+            </p>
+
+            <p class="text-primary/70 text-lg leading-relaxed">
+              Cada plato es una oda a los pescadores locales y a las recetas que han pasado de generación en generación, elevadas con técnicas modernas y una presentación impecable.
+            </p>
+
+            <div class="pt-4">
+              <a class="inline-flex items-center gap-2 text-primary font-bold border-b-2 border-coral pb-1 hover:gap-4 transition-all" href="#">
+                Conoce nuestra historia completa
+                <span class="material-symbols-outlined">arrow_forward</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- 5. Footer -->
+    <footer class="bg-primary text-white pt-20 pb-10">
+      <div class="max-w-[1200px] mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+          
+          <!-- Brand Info -->
+          <div class="flex flex-col gap-6">
+            <div class="flex items-center gap-3">
+              <div class="size-10 flex items-center justify-center bg-coral text-white rounded-lg">
+                <span class="material-symbols-outlined">waves</span>
+              </div>
+              <h2 class="text-2xl font-black tracking-tight">MAR Y MAR</h2>
+            </div>
+
+            <p class="text-white/60 leading-relaxed">
+              El destino gastronómico donde el horizonte se encuentra con tu paladar. Productos frescos de origen sostenible.
+            </p>
+
+            <div class="flex gap-4">
+              <a class="size-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-coral transition-colors" href="#">
+                <span class="material-symbols-outlined text-xl">social_leaderboard</span>
+              </a>
+              <a class="size-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-coral transition-colors" href="#">
+                <span class="material-symbols-outlined text-xl">camera</span>
+              </a>
+              <a class="size-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-coral transition-colors" href="#">
+                <span class="material-symbols-outlined text-xl">alternate_email</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Links -->
+          <div class="flex flex-col gap-6">
+            <h4 class="text-lg font-bold">Explora</h4>
+            <ul class="flex flex-col gap-3 text-white/60">
+              <li><a class="hover:text-coral transition-colors" href="#">Nuestro Menú</a></li>
+              <li><a class="hover:text-coral transition-colors" href="#">Reservaciones</a></li>
+              <li><a class="hover:text-coral transition-colors" href="#">Eventos Privados</a></li>
+              <li><a class="hover:text-coral transition-colors" href="#">Blog Culinario</a></li>
+            </ul>
+          </div>
+
+          <!-- Contact -->
+          <div class="flex flex-col gap-6">
+            <h4 class="text-lg font-bold">Contacto</h4>
+            <ul class="flex flex-col gap-4 text-white/60">
+              <li class="flex items-start gap-3">
+                <span class="material-symbols-outlined text-coral">location_on</span>
+                <span>Av. Oceánica 452, <br/>Puerto Esmeralda</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-coral">call</span>
+                <span>+54 11 4567-8900</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-coral">mail</span>
+                <span>hola@marymar.com</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Hours -->
+          <div class="flex flex-col gap-6">
+            <h4 class="text-lg font-bold">Horarios</h4>
+            <ul class="flex flex-col gap-3 text-white/60">
+              <li class="flex justify-between border-b border-white/10 pb-2">
+                <span>Lun - Jue</span>
+                <span class="text-white">12:00 - 23:00</span>
+              </li>
+              <li class="flex justify-between border-b border-white/10 pb-2">
+                <span>Vie - Sáb</span>
+                <span class="text-white">12:00 - 01:00</span>
+              </li>
+              <li class="flex justify-between">
+                <span>Domingo</span>
+                <span class="text-white">12:00 - 18:00</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-white/40 text-sm">
+          <p>© 2024 Restaurante Mar y Mar. Todos los derechos reservados.</p>
+          <div class="flex gap-6">
+            <a class="hover:text-white transition-colors" href="#">Términos</a>
+            <a class="hover:text-white transition-colors" href="#">Privacidad</a>
+            <a class="hover:text-white transition-colors" href="#">Cookies</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
