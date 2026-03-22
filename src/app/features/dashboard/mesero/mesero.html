@@ -1,3 +1,200 @@
-<h2>Bienvenido Mesero</h2>
-<p>Tu rol es: {{ rol }}</p>
-<button (click)="logout()">Cerrar sesión</button>
+<div class="flex h-screen overflow-hidden bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100">
+
+  <!-- SideNavBar -->
+  <aside class="w-64 bg-white dark:bg-slate-900 border-r border-primary/10 flex flex-col justify-between">
+    <div class="flex flex-col gap-8 p-6">
+      <div class="flex items-center gap-3">
+        <div class="bg-primary rounded-lg p-2 text-white">
+          <span class="material-symbols-outlined">restaurant</span>
+        </div>
+        <div class="flex flex-col">
+          <h1 class="text-primary text-lg font-bold leading-none">Mar y Mar</h1>
+          <p class="text-slate-500 dark:text-slate-400 text-xs font-medium">Panel de Mesero</p>
+        </div>
+      </div>
+
+      <nav class="flex flex-col gap-2">
+        <a class="sidebar-item-active flex items-center gap-3 px-4 py-3 rounded-r-lg text-primary font-semibold">
+          <span class="material-symbols-outlined">grid_view</span>
+          <span class="text-sm">Mesas</span>
+        </a>
+
+        <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-primary/5 transition-colors">
+          <span class="material-symbols-outlined">receipt_long</span>
+          <span class="text-sm font-medium">Pedidos en Vivo</span>
+        </a>
+
+        <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-primary/5 transition-colors">
+          <span class="material-symbols-outlined">person</span>
+          <span class="text-sm font-medium">Mi Perfil</span>
+        </a>
+      </nav>
+    </div>
+
+    <div class="p-6 border-t border-primary/5">
+      <div class="flex items-center gap-3">
+        <div class="size-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
+          M
+        </div>
+        <div class="flex flex-col">
+          <p class="text-sm font-semibold">Mesero</p>
+          <p class="text-xs text-slate-500">Turno activo</p>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 flex flex-col overflow-y-auto">
+
+    <!-- Header -->
+    <header class="flex items-center justify-between px-8 py-4 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm sticky top-0 z-10 border-b border-primary/5">
+      <div class="flex items-center gap-4">
+        <h2 class="text-2xl font-bold text-primary dark:text-slate-100">Mapa de Mesas</h2>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <button class="p-2 rounded-full bg-white dark:bg-slate-800 border border-primary/10 text-primary relative">
+          <span class="material-symbols-outlined">notifications</span>
+          <span class="absolute top-2 right-2 size-2 bg-accent-orange rounded-full border-2 border-white"></span>
+        </button>
+
+        <button class="p-2 rounded-full bg-white dark:bg-slate-800 border border-primary/10 text-primary">
+          <span class="material-symbols-outlined">settings</span>
+        </button>
+
+        <div class="h-8 w-px bg-primary/10"></div>
+
+        <button
+          (click)="logout()"
+          class="flex items-center gap-2 bg-orange-500 text-white px-5 py-2 rounded-lg font-semibold hover:bg-orange-600 transition">
+          <span class="material-symbols-outlined text-[20px]">logout</span>
+          Cerrar sesión
+        </button>
+      </div>
+    </header>
+
+    <div class="p-8 space-y-8">
+
+      <!-- Area Selector -->
+      <div class="flex flex-col gap-4">
+        <div class="flex border-b border-primary/10 gap-8">
+          <button
+            (click)="cambiarPestana('SALON')"
+            class="border-b-4 pb-3 font-bold text-sm tracking-wide"
+            [ngClass]="pestanaActiva === 'SALON'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-slate-400 hover:text-primary transition-colors'">
+            SALÓN PRINCIPAL
+          </button>
+
+          <button
+            (click)="cambiarPestana('TERRAZA')"
+            class="border-b-4 pb-3 font-bold text-sm tracking-wide"
+            [ngClass]="pestanaActiva === 'TERRAZA'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-slate-400 hover:text-primary transition-colors'">
+            TERRAZA
+          </button>
+        </div>
+      </div>
+
+      <!-- Legend -->
+      <div class="flex gap-6 items-center bg-white/40 dark:bg-slate-800/40 p-4 rounded-xl border border-primary/5">
+        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Estados:</span>
+
+        <div class="flex items-center gap-2">
+          <div class="size-4 rounded-full bg-status-available border border-green-300"></div>
+          <span class="text-sm font-medium">Disponible</span>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <div class="size-4 rounded-full bg-primary"></div>
+          <span class="text-sm font-medium">Ocupada</span>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <div class="size-4 rounded-full bg-accent-orange"></div>
+          <span class="text-sm font-medium">Cuenta Pedida</span>
+        </div>
+      </div>
+
+      <!-- Tables Grid -->
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+
+        <div
+          *ngFor="let m of obtenerMesasVisibles()"
+          (click)="seleccionarMesa(m)"
+          class="group cursor-pointer aspect-square rounded-2xl flex flex-col items-center justify-center gap-2 shadow-lg hover:scale-[1.02] transition-all"
+          [ngClass]="getClaseMesa(m)">
+
+          <div
+            class="size-16 rounded-full flex items-center justify-center font-bold text-xl"
+            [ngClass]="m.estado === 'DISPONIBLE'
+              ? 'bg-white/60 text-primary'
+              : 'bg-white/10 text-white'">
+            {{ m.numero }}
+          </div>
+
+          <span class="font-bold text-sm text-center">
+            {{ m.estado === 'CUENTA_PEDIDA' ? 'Cuenta Pedida' : m.estado }}
+          </span>
+
+          <span class="text-xs font-medium opacity-80">
+            {{ getTextoSecundario(m) }}
+          </span>
+        </div>
+
+      </div>
+
+      <!-- Empty State -->
+      <div
+        *ngIf="obtenerMesasVisibles().length === 0"
+        class="bg-white/40 dark:bg-slate-800/40 p-10 rounded-2xl border border-primary/5 text-center text-slate-400">
+        No hay mesas para mostrar en esta zona.
+      </div>
+
+      <!-- Quick Stats Footer -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-12 pb-8">
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-primary/10 flex items-center gap-4">
+          <div class="p-3 bg-primary/5 rounded-xl text-primary">
+            <span class="material-symbols-outlined">table_restaurant</span>
+          </div>
+          <div>
+            <p class="text-2xl font-bold text-primary">{{ totalLibres() }}/{{ mesas.length }}</p>
+            <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Mesas Libres</p>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-primary/10 flex items-center gap-4">
+          <div class="p-3 bg-primary/5 rounded-xl text-primary">
+            <span class="material-symbols-outlined">groups</span>
+          </div>
+          <div>
+            <p class="text-2xl font-bold text-primary">{{ totalCapacidad() }}</p>
+            <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Capacidad Total</p>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-primary/10 flex items-center gap-4">
+          <div class="p-3 bg-primary/5 rounded-xl text-primary">
+            <span class="material-symbols-outlined">payments</span>
+          </div>
+          <div>
+            <p class="text-2xl font-bold text-primary">{{ totalCuentaPedida() }}</p>
+            <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Cuentas p/ Cobrar</p>
+          </div>
+        </div>
+
+        <div class="bg-primary p-6 rounded-2xl text-white flex items-center justify-between cursor-pointer hover:bg-primary/90 transition-colors">
+          <div>
+            <p class="text-sm font-bold">Abrir Comanda</p>
+            <p class="text-xs opacity-70">Selecciona mesa primero</p>
+          </div>
+          <span class="material-symbols-outlined">add_circle</span>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>

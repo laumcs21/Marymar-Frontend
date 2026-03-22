@@ -11,6 +11,7 @@ import { adminGuard } from './core/guards/admin.guard';
 import { GPersonasComponent } from './features/dashboard/administrador/g-personas/g-personas';
 import { GCategoriasComponent } from './features/dashboard/administrador/g-categorias/g-categorias';
 import { GProductosComponent } from './features/dashboard/administrador/g-productos/g-productos';
+import { GMesasComponent } from './features/dashboard/administrador/g-mesas/g-mesas';
 import { RegisterComponent } from './features/auth/pages/registro/registro';
 import { ForgotPasswordComponent } from './features/auth/pages/forgot-password/forgot-password';
 import { ResetPasswordComponent } from './features/auth/pages/reset-password/reset-password';
@@ -86,6 +87,12 @@ export const routes: Routes = [
       loadComponent: () =>
         import('./features/dashboard/administrador/g-inventario/g-inventario')
           .then(m => m.GInventarioComponent)
+    },
+    {
+      path: 'g-mesas',
+      loadComponent: () =>
+        import('./features/dashboard/administrador/g-mesas/g-mesas')
+          .then(m => m.GMesasComponent)
     }
   ]
 },
