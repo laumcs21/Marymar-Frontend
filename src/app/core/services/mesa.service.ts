@@ -35,4 +35,18 @@ export class MesaService {
     activa
   );
 }
+
+abrirMesa(mesaId: number, meseroId: number) {
+  return this.http.post(
+    `${environment.apiUrl}/mesas/${mesaId}/abrir?meseroId=${meseroId}`,
+    {}
+  );
+}
+
+cancelarMesa(mesaId: number) {
+  return this.http.post(
+    `${this.apiUrl}/${mesaId}/cancelar`,
+    {}
+  );
+}
 }

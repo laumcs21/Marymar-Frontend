@@ -42,4 +42,8 @@ cambiarEstado(id: number, activo: boolean) {
   eliminar(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  miPerfil(): Observable<Persona> {
+    return this.http.get<Persona>(`${this.apiUrl}/me`);
+  }
 }

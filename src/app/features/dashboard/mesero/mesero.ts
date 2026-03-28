@@ -1,103 +1,45 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { MesaService } from '../../../core/services/mesa.service';
-import { Mesa } from '../../../core/models/mesa.model';
+import { PersonaService } from '../../../core/services/persona.service';
 
 @Component({
   selector: 'app-mesero',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterOutlet],
   templateUrl: './mesero.html',
   styleUrls: ['./mesero.css'],
 })
 export class MeseroComponent implements OnInit {
 
-  mesas: Mesa[] = [];
-  salon: Mesa[] = [];
-  terraza: Mesa[] = [];
-
-  pestanaActiva: 'SALON' | 'TERRAZA' = 'SALON';
+  nombreMesero = '';
 
   constructor(
     private router: Router,
-    private mesaService: MesaService
+    private personaService: PersonaService
   ) {}
 
   ngOnInit(): void {
-    this.cargarMesas();
+    this.cargarPerfil();
   }
 
-  cargarMesas() {
-    this.mesaService.obtenerTodas().subscribe({
+  cargarPerfil() {
+    this.personaService.miPerfil().subscribe({
       next: (data) => {
-        console.log('DATA Backend:', data)
-        const activas = (data || []).filter(m => m.activa);
-
-        this.mesas = activas;
-        this.salon = activas.slice(0, 4);
-        this.terraza = activas.slice(4);
-
-        console.log('Mesas activas:', activas);
-        console.log('Salón:', this.salon);
-        console.log('Terraza:', this.terraza);
+        this.nombreMesero = data.nombre;
       },
       error: (err) => {
-        console.error('Error cargando mesas:', err);
+        console.error('Error cargando perfil:', err);
       }
     });
   }
 
-  cambiarPestana(tab: 'SALON' | 'TERRAZA') {
-    this.pestanaActiva = tab;
+  irPerfil() {
+    this.router.navigate(['/dashboard/mesero/perfil']);
   }
 
-  obtenerMesasVisibles(): Mesa[] {
-    return this.pestanaActiva === 'SALON' ? this.salon : this.terraza;
-  }
-
-  seleccionarMesa(mesa: Mesa) {
-    console.log('Mesa seleccionada:', mesa);
-    // luego aquí conectas abrir pedido o ver pedido
-    // this.router.navigate(['/dashboard/mesero/pedido', mesa.id]);
-  }
-
-  getClaseMesa(mesa: Mesa): string {
-    switch (mesa.estado) {
-      case 'DISPONIBLE':
-        return 'bg-status-available border-2 border-green-200 text-primary';
-      case 'OCUPADA':
-        return 'bg-primary text-white';
-      case 'CUENTA_PEDIDA':
-        return 'bg-accent-orange text-white';
-      default:
-        return 'bg-white text-primary border border-primary/10';
-    }
-  }
-
-  getTextoSecundario(mesa: Mesa): string {
-    switch (mesa.estado) {
-      case 'DISPONIBLE':
-        return `${mesa.capacidad ?? 4} pax`;
-      case 'OCUPADA':
-        return 'En servicio';
-      case 'CUENTA_PEDIDA':
-        return 'Pendiente cobro';
-      default:
-        return '';
-    }
-  }
-
-  totalLibres(): number {
-    return this.mesas.filter(m => m.estado === 'DISPONIBLE').length;
-  }
-
-  totalCuentaPedida(): number {
-    return this.mesas.filter(m => m.estado === 'CUENTA_PEDIDA').length;
-  }
-
-  totalCapacidad(): number {
-    return this.mesas.reduce((acc, m) => acc + (m.capacidad ?? 4), 0);
+  irMesas() {
+    this.router.navigate(['/dashboard/mesero']);
   }
 
   logout() {
