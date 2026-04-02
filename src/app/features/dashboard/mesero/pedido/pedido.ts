@@ -10,6 +10,8 @@ import { PersonaService } from '../../../../core/services/persona.service';
 import { MesaService } from '../../../../core/services/mesa.service';
 
 import { Pedido } from '../../../../core/models/pedido.model';
+import { Producto } from '../../../../core/models/producto.model';
+
 
 @Component({
   selector: 'app-pedido',
@@ -34,9 +36,13 @@ export class PedidoComponent implements OnInit {
   errorPago: string | null = null;
   exitoPago: string | null = null;
 
-  // 🔥 MODAL
   mostrarModalCancelar = false;
   cargandoCancelacion = false;
+
+  mostrarModalError = false;
+  mensajeError = '';
+  productosActivos: Producto[] = []
+  
 
   constructor(
     private route: ActivatedRoute,
@@ -83,7 +89,7 @@ export class PedidoComponent implements OnInit {
   // =========================
   cargarProductos() {
     this.productoService.obtenerTodos().subscribe(data => {
-      this.productos = data;
+      this.productos = data.filter(p => p.activo === true)
 
       this.categorias = [
         ...new Map(data.map(p => [p.categoriaId, {
@@ -109,10 +115,16 @@ export class PedidoComponent implements OnInit {
     this.categoriaSeleccionada = catId;
   }
 
-  agregarProducto(p: any) {
-    this.pedidoService.agregarProducto(this.pedido.id, p.id)
-      .subscribe(() => this.cargarPedido());
-  }
+agregarProducto(p: any) {
+  this.pedidoService.agregarProducto(this.pedido.id, p.id)
+    .subscribe({
+      next: () => this.cargarPedido(),
+
+      error: (err) => {
+        this.mostrarErrorStock(err.error?.message || 'Stock insuficiente');
+      }
+    });
+}
 
   disminuir(d: any) {
     this.pedidoService.disminuirProducto(this.pedido.id, d.productoId)
@@ -123,6 +135,11 @@ export class PedidoComponent implements OnInit {
     this.pedidoService.eliminarDetalle(this.pedido.id, d.id)
       .subscribe(() => this.cargarPedido());
   }
+
+  mostrarErrorStock(msg: string) {
+  this.mensajeError = msg;
+  this.mostrarModalError = true;
+}
 
   cambiarCantidad(d: any, cambio: number) {
     if (cambio === -1) {

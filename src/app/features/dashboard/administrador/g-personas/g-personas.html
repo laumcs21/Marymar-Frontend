@@ -21,13 +21,16 @@
 
   <!-- BUSCADOR -->
   <div class="relative w-full md:w-1/2">
-    <input
-      type="text"
-      placeholder="Buscar por nombre o identificación..."
-      [(ngModel)]="busqueda"
-      (input)="aplicarFiltros()"
-      class="w-full border rounded-lg px-4 py-2 pl-10 focus:ring-2 focus:ring-primary outline-none"
-    />
+    <div class="input-group">
+      <input
+        type="text"
+        placeholder="Buscar por nombre o identificación..."
+        [(ngModel)]="busqueda"
+        (input)="aplicarFiltros()"
+        class="w-full border rounded-lg px-4 py-2 pl-10 focus:ring-2 focus:ring-primary outline-none"
+      />
+      <label>Buscar por nombre o identificación...</label>
+    </div>
     <span class="absolute left-3 top-2.5 text-gray-400 material-symbols-outlined">
       search
     </span>
@@ -145,21 +148,26 @@
 
         <!-- IDENTIFICACIÓN -->
         <div>
-          <input formControlName="numeroIdentificacion"
-                 class="w-full border p-2 rounded"
-                 placeholder="Identificacion" />
+          <div class="input-group">
+            <input formControlName="numeroIdentificacion"
+                   class="w-full border p-2 rounded"
+                   placeholder="Identificacion" />
+            <label>Identificación</label>
+          </div>
           <div *ngIf="form.get('numeroIdentificacion')?.touched && form.get('numeroIdentificacion')?.invalid"
                class="text-red-500 text-sm mt-1">
             Campo obligatorio
-            <span *ngIf="form.get('numeroIdentificacion')?.errors?.['duplicado']">Este número de identificación ya existe</span>
           </div>
         </div>
 
         <!-- NOMBRE -->
         <div>
-          <input formControlName="nombre"
-                 class="w-full border p-2 rounded"
-                 placeholder="Nombre completo" />
+          <div class="input-group">
+            <input formControlName="nombre"
+                   class="w-full border p-2 rounded"
+                   placeholder="Nombre completo" />
+            <label>Nombre completo</label>
+          </div>
           <div *ngIf="form.get('nombre')?.touched && form.get('nombre')?.invalid"
                class="text-red-500 text-sm mt-1">
             Campo obligatorio
@@ -168,15 +176,11 @@
 
         <!-- EMAIL -->
         <div>
-          <input formControlName="email"
-                 class="w-full border p-2 rounded"
-                 placeholder="Email" 
-                 autocomplete="off"/>
-          <div *ngIf="form.get('email')?.touched && form.get('email')?.invalid"
-               class="text-red-500 text-sm mt-1">
-            <span *ngIf="form.get('email')?.errors?.['required']">Correo obligatorio</span>
-            <span *ngIf="form.get('email')?.errors?.['email']">Formato inválido</span>
-            <span *ngIf="form.get('email')?.errors?.['duplicado']">Este correo ya está registrado</span>
+          <div class="input-group">
+            <input formControlName="email"
+                   class="w-full border p-2 rounded"
+                   placeholder="Email"/>
+            <label>Email</label>
           </div>
         </div>
 
@@ -185,20 +189,14 @@
 
   <div class="password-field">
 
-    <input
-      [type]="tipoInputPassword"
-      formControlName="contrasena"
-      placeholder="Contraseña"
-      autocomplete="new-password"
-      name="marymar_registro_password"
-      autocapitalize="off"
-      spellcheck="false"
-      data-lpignore="true"
-      data-form-type="other"
-      (focus)="mostrarReglasPassword = true"
-      (blur)="ocultarReglasConDelay()"
-      (input)="activarPassword()"
-    />
+    <div class="input-group">
+      <input
+        [type]="tipoInputPassword"
+        formControlName="contrasena"
+        placeholder="Contraseña"
+      />
+      <label>Contraseña</label>
+    </div>
 
     <span
       class="toggle-password"
@@ -223,10 +221,9 @@
     <p>• Un símbolo</p>
 
 </div>
-      <!-- ERRORES -->
+
       <div *ngIf="form.get('contrasena')?.touched && form.get('contrasena')?.invalid"
           class="text-red-500 text-sm mt-1">
-
         <span *ngIf="form.get('contrasena')?.errors?.['required']">
           Contraseña obligatoria
         </span>
@@ -236,13 +233,11 @@
 
         <!-- FECHA -->
         <div>
-          <input formControlName="fechaNacimiento"
-                 type="date"
-                 class="w-full border p-2 rounded" 
-                 [max]="fechaMaxima"/>
-          <div *ngIf="form.get('fechaNacimiento')?.touched && form.get('fechaNacimiento')?.invalid"
-               class="text-red-500 text-sm mt-1">
-            Fecha obligatoria
+          <div class="input-group">
+            <input formControlName="fechaNacimiento"
+                   type="date"
+                   class="w-full border p-2 rounded"/>
+            <label>Fecha de nacimiento</label>
           </div>
         </div>
 
@@ -260,37 +255,29 @@
             <option value="MESERO">Mesero</option>
             <option value="CLIENTE" *ngIf="modoEdicion">Cliente</option>
           </select>
-          <div *ngIf="form.get('rol')?.touched && form.get('rol')?.invalid"
-               class="text-red-500 text-sm mt-1">
-            Rol obligatorio
-          </div>
         </div>
 
         <!-- DIRECCIÓN -->
       <div *ngIf="form.get('rol')?.value === 'CLIENTE'">
-        <input
-          formControlName="direccionEnvio"
-          class="w-full border p-2 rounded"
-          placeholder="Dirección de envío"
-        />
-
-        <div *ngIf="form.get('direccionEnvio')?.touched && form.get('direccionEnvio')?.invalid"
-            class="text-red-500 text-sm mt-1">
-          Dirección obligatoria
+        <div class="input-group">
+          <input
+            formControlName="direccionEnvio"
+            class="w-full border p-2 rounded"
+            placeholder="Dirección de envío"
+          />
+          <label>Dirección de envío</label>
         </div>
       </div>
 
         <!-- SALARIO -->
         <div *ngIf="form.get('rol')?.value === 'ADMINISTRADOR' || form.get('rol')?.value === 'MESERO'">
-          <input formControlName="salario"
-                 type="number"
-                 min="0"
-                 class="w-full border p-2 rounded"
-                 placeholder="Salario" />
-          <div *ngIf="form.get('salario')?.touched && form.get('salario')?.invalid"
-               class="text-red-500 text-sm mt-1">
-            <span *ngIf="form.get('salario')?.errors?.['required']">Salario obligatorio</span>
-            <span *ngIf="form.get('salario')?.errors?.['min']">No puede ser negativo</span>
+          <div class="input-group">
+            <input formControlName="salario"
+                   type="number"
+                   min="0"
+                   class="w-full border p-2 rounded"
+                   placeholder="Salario" />
+            <label>Salario</label>
           </div>
         </div>
 

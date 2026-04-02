@@ -30,16 +30,19 @@
       search
     </span>
 
-    <input
-      type="text"
-      [(ngModel)]="terminoBusqueda"
-      (input)="filtrarCategorias()"
-      placeholder="Buscar categoría por nombre..."
-      class="w-full h-11 pl-10 pr-4 rounded-lg 
-             border border-slate-200 
-             focus:ring-2 focus:ring-primary 
-             focus:border-primary
-             text-sm" />
+    <div class="input-group">
+      <input
+        type="text"
+        [(ngModel)]="terminoBusqueda"
+        (input)="filtrarCategorias()"
+        placeholder="Buscar categoría por nombre..."
+        class="w-full h-11 pl-10 pr-4 rounded-lg 
+               border border-slate-200 
+               focus:ring-2 focus:ring-primary 
+               focus:border-primary
+               text-sm" />
+      <label>Buscar categoría por nombre...</label>
+    </div>
     </div>
 </div>
 
@@ -148,11 +151,7 @@
 
       <form [formGroup]="form" (ngSubmit)="guardar()" class="space-y-5">
 
-        <div>
-          <label class="block text-sm font-bold text-primary dark:text-slate-300 mb-2">
-            Nombre de la Categoría
-          </label>
-
+        <div class="input-group">
           <input
             formControlName="nombre"
             class="w-full h-12 px-4 rounded-lg border border-slate-200 dark:border-slate-700 
@@ -163,6 +162,7 @@
                    placeholder:text-slate-400"
             placeholder="Ej. Mariscos Frescos"
             type="text" />
+          <label>Nombre de la Categoría</label>
         </div>
 
         <!-- INFO BOX -->

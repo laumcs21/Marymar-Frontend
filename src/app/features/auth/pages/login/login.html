@@ -11,21 +11,27 @@
        <input type="text" style="display:none">
       <input type="password" style="display:none">
 
-      <input 
-        type="email" 
-        placeholder="Correo electrónico"
-        formControlName="email"
-        autocomplete="new-email"
-      >
+      <div class="input-group">
+        <input 
+          type="email" 
+          placeholder="Correo electrónico"
+          formControlName="email"
+          autocomplete="new-email"
+        >
+        <label>Correo electrónico</label>
+      </div>
 
     <div class="password-container">
 
-      <input
-        [type]="mostrarPassword ? 'text' : 'password'"
-        placeholder="Contraseña"
-        formControlName="contrasena"
-        autocomplete="new-password"
-      />
+      <div class="input-group">
+        <input
+          [type]="mostrarPassword ? 'text' : 'password'"
+          placeholder="Contraseña"
+          formControlName="contrasena"
+          autocomplete="new-password"
+        />
+        <label>Contraseña</label>
+      </div>
 
       <span class="toggle-password"
             (click)="mostrarPassword = !mostrarPassword">

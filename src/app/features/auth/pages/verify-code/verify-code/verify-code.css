@@ -109,3 +109,42 @@ p {
   color:#c62828;
   font-weight:600;
 }
+
+.input-group {
+  position: relative;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  position: absolute;
+  top: 0px;
+  left: 12px;
+  transform: translateY(-50%) scale(0.9);
+  background-color: white;
+  padding: 2px 6px;
+  opacity: 0;
+  font-size: 13px;
+  font-weight: 600;
+  transition: 0.2s;
+  pointer-events: none;
+  color: #666;
+  z-index: 2;
+  line-height: 1;
+}
+
+.input-group input:focus + label {
+  opacity: 1;
+}
+
+.input-group input:not(:placeholder-shown) + label {
+  opacity: 1;
+}
+
+.input-group input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+
+

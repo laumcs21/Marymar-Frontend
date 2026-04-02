@@ -7,12 +7,16 @@
     <p class="subtitle">Regístrate para disfrutar de nuestros platos</p>
 
     <form [formGroup]="form" (ngSubmit)="registrar()" autocomplete="off">
+
       <!-- Identificación -->
-      <input
-        formControlName="numeroIdentificacion"
-        placeholder="Identificación"
-        autocomplete="off"
-      />
+      <div class="input-group">
+        <input
+          formControlName="numeroIdentificacion"
+          placeholder="Identificación"
+          autocomplete="off"
+        />
+        <label>Identificación</label>
+      </div>
       <div class="error"
           *ngIf="(form.get('numeroIdentificacion')?.touched || formEnviado)
                   && form.get('numeroIdentificacion')?.invalid">
@@ -20,22 +24,28 @@
       </div>
 
       <!-- Nombre -->
-      <input
-        formControlName="nombre"
-        placeholder="Nombre completo"
-        autocomplete="name"
-      />
+      <div class="input-group">
+        <input
+          formControlName="nombre"
+          placeholder="Nombre completo"
+          autocomplete="name"
+        />
+        <label>Nombre completo</label>
+      </div>
       <div class="error" *ngIf="(form.get('nombre')?.touched || formEnviado) && form.get('nombre')?.invalid">
         Campo obligatorio
       </div>
 
       <!-- Email -->
-      <input
-        type="email"
-        formControlName="email"
-        placeholder="Correo electrónico"
-        autocomplete="new-email"
-      />
+      <div class="input-group">
+        <input
+          type="email"
+          formControlName="email"
+          placeholder="Correo electrónico"
+          autocomplete="new-email"
+        />
+        <label>Correo electrónico</label>
+      </div>
       <div class="error" *ngIf="(form.get('email')?.touched || formEnviado)  && form.get('email')?.invalid">
         <span *ngIf="form.get('email')?.errors?.['required']">Correo obligatorio</span>
         <span *ngIf="form.get('email')?.errors?.['email']">· Formato inválido</span>
@@ -46,18 +56,21 @@
 <div class="password-container">
 
   <div class="password-field">
-    <input
-      [type]="tipoInputPassword"
-      formControlName="contrasena"
-      placeholder="Contraseña"
-      autocomplete="off"
-      name="registro_mar_y_mar_password"
-      autocapitalize="off"
-      spellcheck="false"
-      (focus)="mostrarReglasPassword = true"
-      (blur)="ocultarReglasConDelay()"
-      (input)="activarPassword()"
-    />
+    <div class="input-group">
+      <input
+        [type]="tipoInputPassword"
+        formControlName="contrasena"
+        placeholder="Contraseña"
+        autocomplete="off"
+        name="registro_mar_y_mar_password"
+        autocapitalize="off"
+        spellcheck="false"
+        (focus)="mostrarReglasPassword = true"
+        (blur)="ocultarReglasConDelay()"
+        (input)="activarPassword()"
+      />
+      <label>Contraseña</label>
+    </div>
 
 <span 
   class="toggle-password"
@@ -110,12 +123,17 @@
   </div>
 
 </div>
+
       <!-- Fecha nacimiento -->
-      <input
-        type="date"
-        formControlName="fechaNacimiento"
-        [max]="fechaMaxima"
-      />
+      <div class="input-group">
+        <input
+          type="date"
+          formControlName="fechaNacimiento"
+          [max]="fechaMaxima"
+          placeholder=" "
+        />
+        <label>Fecha de nacimiento</label>
+      </div>
       <div class="error"
           *ngIf="(form.get('fechaNacimiento')?.touched || formEnviado)  && form.get('fechaNacimiento')?.invalid">
 
@@ -130,11 +148,14 @@
       </div>
 
       <!-- Dirección obligatoria -->
-      <input
-        formControlName="direccionEnvio"
-        placeholder="Dirección de envío"
-        autocomplete="street-address"
-      />
+      <div class="input-group">
+        <input
+          formControlName="direccionEnvio"
+          placeholder="Dirección de envío"
+          autocomplete="street-address"
+        />
+        <label>Dirección de envío</label>
+      </div>
       <div class="error" *ngIf="(form.get('direccionEnvio')?.touched || formEnviado)  && form.get('direccionEnvio')?.invalid">
         Dirección obligatoria
       </div>

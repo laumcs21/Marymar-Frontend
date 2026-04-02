@@ -309,3 +309,27 @@
 
   </div>
 </div>
+
+<div *ngIf="mostrarModalError"
+     class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+
+  <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 w-[350px] shadow-xl">
+
+    <h2 class="text-lg font-bold mb-2 text-red-500">
+      Stock insuficiente
+    </h2>
+
+    <p class="text-sm text-slate-500 mb-6">
+      {{ mensajeError }}
+    </p>
+
+    <div class="flex justify-end">
+      <button
+        (click)="mostrarModalError = false"
+        class="px-4 py-2 rounded-lg bg-primary text-white text-sm font-bold">
+        Entendido
+      </button>
+    </div>
+
+  </div>
+</div>

@@ -3,6 +3,7 @@ import { Router, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ProductoService } from '../../../core/services/producto.service';
 import { CarritoService } from '../../../core/services/carrito.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-cliente',
@@ -20,7 +21,8 @@ export class ClienteComponent implements OnInit {
   mostrarModalVista = false;
   cantidadCarrito = 0;
 
-  constructor(private router: Router, private productoService: ProductoService, private carritoService: CarritoService) {}
+  constructor(private router: Router, private productoService: ProductoService, private carritoService: CarritoService, private authService: AuthService
+  ) {}
 
   ngOnInit() {
     this.rol = localStorage.getItem('rol');
@@ -30,11 +32,11 @@ export class ClienteComponent implements OnInit {
 
   }
 
-  logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('rol');
-    this.router.navigate(['/login']);
-  }
+logout() {
+  this.authService.logout();
+  this.router.navigate(['/login']);
+}
+
 cargarProductos() {
 
   this.productoService.obtenerTodos().subscribe(res => {

@@ -56,6 +56,9 @@ export class GInventarioComponent implements OnInit {
 
   modoFormulario: 'crear' | 'editar' | null = null;
 
+  busquedaInventario: string = '';
+  busquedaInsumo: string = '';
+
   constructor(
     private inventarioService: InventarioService,
     private insumoService: InsumoService
@@ -262,6 +265,31 @@ export class GInventarioComponent implements OnInit {
   cerrarModalInsumo() {
   this.modalInsumo = false;
   this.cancelarFormularioInsumo();
+}
+
+get inventarioFiltrado() {
+  const texto = this.busquedaInventario.toLowerCase().trim();
+
+  if (!texto) return this.inventario;
+
+  return this.inventario.filter(item =>
+    item.id.toString().includes(texto) ||
+    item.insumoNombre.toLowerCase().includes(texto) ||
+    item.unidad.toLowerCase().includes(texto) ||
+    item.stock.toString().includes(texto)
+  );
+}
+
+get insumosFiltrados() {
+  const texto = this.busquedaInsumo.toLowerCase().trim();
+
+  if (!texto) return this.insumos;
+
+  return this.insumos.filter(insumo =>
+    insumo.id.toString().includes(texto) ||
+    insumo.nombre.toLowerCase().includes(texto) ||
+    insumo.unidad.toLowerCase().includes(texto)
+  );
 }
 
 }

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { PersonaService } from '../../../core/services/persona.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-mesero',
@@ -16,7 +17,8 @@ export class MeseroComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private personaService: PersonaService
+    private personaService: PersonaService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -42,9 +44,8 @@ export class MeseroComponent implements OnInit {
     this.router.navigate(['/dashboard/mesero']);
   }
 
-  logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('rol');
-    this.router.navigate(['/login']);
-  }
+logout() {
+  this.authService.logout();
+  this.router.navigate(['/login']);
+}
 }

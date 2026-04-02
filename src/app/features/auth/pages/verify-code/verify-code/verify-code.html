@@ -13,14 +13,17 @@
 
     <form [formGroup]="form" (ngSubmit)="verify()">
 
-      <input 
-        type="text"
-        formControlName="codigo"
-        maxlength="6"
-        placeholder="Ingrese el código"
-        class="input-field code-input"
-        [disabled]="expired"
-      />
+      <div class="input-group">
+        <input 
+          type="text"
+          formControlName="codigo"
+          maxlength="6"
+          placeholder="Ingrese el código"
+          class="input-field code-input"
+          [disabled]="expired"
+        />
+        <label>Ingrese el código</label>
+      </div>
 
       <button 
         type="submit"
@@ -81,4 +84,4 @@
 
   </div>
 
-</div>c
+</div>

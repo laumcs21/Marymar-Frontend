@@ -18,6 +18,17 @@
 
   </div>
 
+      <div class="input-group search-group">
+  <input
+    type="text"
+    placeholder="Buscar por ID, insumo, unidad o stock"
+    [(ngModel)]="busquedaInventario"
+    class="w-full border rounded-lg px-4 py-2 pl-10 focus:ring-2 focus:ring-primary outline-none"
+
+  />
+  <label>Buscar en inventario</label>
+  </div>
+
   <div class="card">
 
     <h3>Inventario</h3>
@@ -36,8 +47,7 @@
 
       <tbody>
 
-        <tr *ngFor="let item of inventario">
-
+      <tr *ngFor="let item of inventarioFiltrado">
           <td>{{ item.id }}</td>
           <td>{{ item.insumoNombre }}</td>
           <td>{{ item.unidad }}</td>
@@ -81,33 +91,39 @@
   <div class="modal-content modal-insumos">
     <div class="modal-header-insumos">
 
-<h3>Gestión de insumos</h3>
+      <h3>Gestión de insumos</h3>
 
-    <div class="acciones-header">
-      <button class="btn-primary" (click)="abrirCrearInsumo()">
-        Nuevo insumo
-      </button>
+      <div class="acciones-header">
+        <button class="btn-primary" (click)="abrirCrearInsumo()">
+          Nuevo insumo
+        </button>
 
-      <button class="btn-cancel" (click)="cerrarModalInsumo()">
-        Cerrar
-      </button>
+        <button class="btn-cancel" (click)="cerrarModalInsumo()">
+          Cerrar
+        </button>
+      </div>
     </div>
-    </div>
 
-    <!-- FORMULARIO (SOLO CUANDO CREAR O EDITAR) -->
+    <!-- FORMULARIO -->
     <div *ngIf="modoFormulario !== null">
 
-      <input
-        type="text"
-        placeholder="Nombre del insumo"
-        [(ngModel)]="nuevoInsumo.nombre"
-      />
+      <div class="input-group">
+        <input
+          type="text"
+          placeholder="Nombre del insumo"
+          [(ngModel)]="nuevoInsumo.nombre"
+        />
+        <label>Nombre del insumo</label>
+      </div>
 
-      <input
-        type="text"
-        placeholder="Unidad (kg, litros, unidad...)"
-        [(ngModel)]="nuevoInsumo.unidad"
-      />
+      <div class="input-group">
+        <input
+          type="text"
+          placeholder="Unidad (kg, litros, unidad...)"
+          [(ngModel)]="nuevoInsumo.unidad"
+        />
+        <label>Unidad (kg, litros, unidad...)</label>
+      </div>
 
       <p class="error-text" *ngIf="errorInsumo">
         {{ errorInsumo }}
@@ -129,47 +145,56 @@
 
     </div>
 
+    <div class="input-group search-group">
+  <input
+    type="text"
+    placeholder="Buscar por ID, nombre o unidad"
+    [(ngModel)]="busquedaInsumo"
+  />
+  <label>Buscar insumo</label>
+</div>
+
     <!-- TABLA INSUMOS -->
     <div class="tabla-container">
 
-    <table class="tabla-insumos">
+      <table class="tabla-insumos">
 
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>NOMBRE</th>
-          <th>UNIDAD</th>
-          <th>ACCIONES</th>
-        </tr>
-      </thead>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>NOMBRE</th>
+            <th>UNIDAD</th>
+            <th>ACCIONES</th>
+          </tr>
+        </thead>
 
-      <tbody>
+        <tbody>
 
-        <tr *ngFor="let insumo of insumos">
-          <td>{{ insumo.id }}</td>
-          <td>{{ insumo.nombre }}</td>
-          <td>{{ insumo.unidad }}</td>
+          <tr *ngFor="let insumo of insumosFiltrados">
+            <td>{{ insumo.id }}</td>
+            <td>{{ insumo.nombre }}</td>
+            <td>{{ insumo.unidad }}</td>
 
-          <td class="acciones-tabla">
+            <td class="acciones-tabla">
 
-            <button (click)="editarInsumo(insumo)">
-              <span class="material-symbols-outlined">edit</span>
-            </button>
+              <button (click)="editarInsumo(insumo)">
+                <span class="material-symbols-outlined">edit</span>
+              </button>
 
-            <button (click)="abrirModalEliminarInsumo(insumo)">
-              <span class="material-symbols-outlined">delete</span>
-            </button>
+              <button (click)="abrirModalEliminarInsumo(insumo)">
+                <span class="material-symbols-outlined">delete</span>
+              </button>
 
-          </td>
-        </tr>
+            </td>
+          </tr>
 
-      </tbody>
+        </tbody>
 
-    </table>
+      </table>
 
-  </div>
-  </div>
     </div>
+  </div>
+</div>
 
 <!-- MODAL REGISTRAR INVENTARIO -->
 <div class="modal" *ngIf="modalInventario">
@@ -188,15 +213,18 @@
 
     </select>
 
-    <input
-      type="number"
-      min="0";
-      placeholder="Stock"
-      [(ngModel)]="nuevoInventario.stock"
-    />
+    <div class="input-group">
+      <input
+        type="number"
+        min="0"
+        placeholder="Stock"
+        [(ngModel)]="nuevoInventario.stock"
+      />
+      <label>Stock</label>
+    </div>
 
     <p class="error-text" *ngIf="errorInventario">
-         {{ errorInventario }}
+      {{ errorInventario }}
     </p>
 
     <div class="modal-buttons">
@@ -208,7 +236,6 @@
       <button class="btn-cancel" (click)="cerrarModal()">
         Cancelar
       </button>
-
 
     </div>
 
@@ -227,11 +254,15 @@
       <strong>{{ inventarioSeleccionado.insumoNombre }}</strong>
     </p>
 
-    <input
-      type="number"
-      min="0";
-      [(ngModel)]="stockEditando"
-    />
+    <div class="input-group">
+      <input
+        type="number"
+        min="0"
+        [(ngModel)]="stockEditando"
+        placeholder="Stock"
+      />
+      <label>Stock</label>
+    </div>
 
     <div class="modal-buttons">
 
@@ -249,7 +280,7 @@
 
 </div>
 
-
+<!-- MODAL ELIMINAR INVENTARIO -->
 <div *ngIf="mostrarModalEliminar"
      class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[3000] p-4"
      (click)="cerrarModalEliminar()">
@@ -257,7 +288,6 @@
   <div class="bg-white rounded-2xl w-full max-w-md shadow-2xl border border-slate-200 overflow-hidden"
        (click)="$event.stopPropagation()">
 
-    <!-- HEADER -->
     <div class="px-6 py-5 border-b border-slate-200 bg-slate-50 flex items-center gap-3">
 
       <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
@@ -277,22 +307,15 @@
 
     </div>
 
-    <!-- BODY -->
     <div class="px-6 py-5">
-
       <p class="text-slate-700 leading-relaxed">
-
         ¿Seguro que deseas eliminar del inventario el 
-
         <span class="font-semibold text-slate-900">
           "{{ inventarioAEliminar?.insumoNombre }}"
         </span>?
-
       </p>
-
     </div>
 
-    <!-- FOOTER -->
     <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-end gap-3">
 
       <button type="button"
@@ -321,10 +344,7 @@
 
 </div>
 
-
-
-<!-- Modal eliminar insumo-->
-
+<!-- MODAL ELIMINAR INSUMO -->
 <div *ngIf="mostrarModalEliminarInsumo"
      class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[3000] p-4"
      (click)="cerrarModalEliminarInsumo()">
@@ -332,7 +352,6 @@
   <div class="bg-white rounded-2xl w-full max-w-md shadow-2xl border border-slate-200 overflow-hidden"
        (click)="$event.stopPropagation()">
 
-    <!-- HEADER -->
     <div class="px-6 py-5 border-b border-slate-200 bg-slate-50 flex items-center gap-3">
 
       <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
@@ -352,22 +371,15 @@
 
     </div>
 
-    <!-- BODY -->
     <div class="px-6 py-5">
-
       <p class="text-slate-700 leading-relaxed">
-
         ¿Seguro que deseas eliminar el insumo 
-
         <span class="font-semibold text-slate-900">
           "{{ insumoAEliminar?.nombre }}"
         </span>?
-
       </p>
-
     </div>
 
-    <!-- FOOTER -->
     <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-end gap-3">
 
       <button type="button"

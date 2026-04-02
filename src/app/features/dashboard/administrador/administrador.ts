@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterOutlet, RouterLinkActive, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-administrador',
@@ -13,15 +14,15 @@ export class AdminComponent implements OnInit {
 
   rol!: string | null;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private authService: AuthService
+  ) {}
 
   ngOnInit() {
     this.rol = localStorage.getItem('rol');
   }
 
   logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('rol');
+    this.authService.logout();
     this.router.navigate(['/login']);
   }
 }

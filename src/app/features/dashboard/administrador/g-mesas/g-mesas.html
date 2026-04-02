@@ -39,11 +39,14 @@
   </div>
 
   <!-- BUSCADOR -->
-  <input type="text"
-    [(ngModel)]="terminoBusqueda"
-    (input)="filtrar()"
-    placeholder="Buscar mesa..."
-    class="w-full mb-4 border px-4 py-2 rounded-lg" />
+  <div class="input-group">
+    <input type="text"
+      [(ngModel)]="terminoBusqueda"
+      (input)="filtrar()"
+      placeholder="Buscar mesa..."
+      class="w-full mb-4 border px-4 py-2 rounded-lg" />
+    <label>Buscar mesa...</label>
+  </div>
 
   <!-- TABLA -->
   <table class="w-full bg-white rounded-xl shadow overflow-hidden">
@@ -119,12 +122,15 @@
 
       <form [formGroup]="form" (ngSubmit)="guardar()">
 
-        <input
-          type="number"
-          formControlName="numero"
-          min="0";
-          placeholder="Número de mesa"
-          class="w-full border px-4 py-2 rounded mb-4" />
+        <div class="input-group">
+          <input
+            type="number"
+            formControlName="numero"
+            min="0"
+            placeholder="Número de mesa"
+            class="w-full border px-4 py-2 rounded mb-4" />
+          <label>Número de mesa</label>
+        </div>
 
           <p *ngIf="errorForm" class="text-red-500 text-sm mb-2">
             {{ errorForm }}

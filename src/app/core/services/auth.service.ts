@@ -37,9 +37,24 @@ export class AuthService {
   }
 
   logout() {
-    localStorage.removeItem('token');
-  }
+    const token = localStorage.getItem('token');
 
+    this.http.post(`${this.apiUrl}/logout`, {}, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }).subscribe({
+      next: () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('rol');
+      },
+      error: () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('rol');
+      }
+    });
+  }
+  
   isAuthenticated(): boolean {
     return !!this.getToken();
   }
