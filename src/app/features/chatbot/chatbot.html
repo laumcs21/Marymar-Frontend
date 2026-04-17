@@ -1,0 +1,76 @@
+<!-- CONTENEDOR PRINCIPAL-->
+<div class="fixed bottom-24 right-6 flex flex-col items-end gap-3 z-[9998]">
+
+  <!-- VENTANA -->
+  <div
+    *ngIf="abierto"
+    class="w-[360px] max-w-[90vw] h-[520px] bg-white rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden">
+
+    <!-- Header -->
+    <div class="bg-primary text-white px-4 py-3 flex items-center justify-between">
+      <div>
+        <h3 class="font-bold text-base">Asistente Mar y Mar</h3>
+        <p class="text-xs opacity-90">Respuestas automáticas</p>
+      </div>
+
+      <button (click)="toggleChat()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <!-- 🔥 ESTE ES EL SCROLL REAL -->
+    <div
+      #chatContainer
+      class="flex-1 overflow-y-auto px-4 py-3 space-y-3 bg-slate-50">
+
+      <div *ngFor="let m of mensajes"
+           class="flex"
+           [ngClass]="{
+             'justify-end': m.tipo === 'usuario',
+             'justify-start': m.tipo === 'bot'
+           }">
+
+        <div
+          class="max-w-[80%] px-4 py-2 rounded-2xl text-sm shadow-sm"
+          [ngClass]="{
+            'bg-primary text-white': m.tipo === 'usuario',
+            'bg-white text-slate-800 border': m.tipo === 'bot'
+          }">
+          {{ m.texto }}
+        </div>
+      </div>
+
+      <div *ngIf="cargando" class="text-xs text-slate-400">
+        El asistente está escribiendo...
+      </div>
+    </div>
+
+    <!-- Input -->
+    <div class="border-t p-3 flex gap-2">
+      <input
+        [(ngModel)]="mensaje"
+        (keyup.enter)="enviarMensaje()"
+        type="text"
+        placeholder="Escribe tu mensaje..."
+        class="flex-1 h-11 px-4 rounded-xl border outline-none" />
+
+      <button
+        (click)="enviarMensaje()"
+        [disabled]="cargando"
+        class="h-11 px-4 rounded-xl bg-primary text-white">
+        Enviar
+      </button>
+    </div>
+
+  </div>
+
+  <!-- BOTÓN -->
+  <button
+    (click)="toggleChat()"
+    class="w-14 h-14 rounded-full bg-primary text-white shadow-xl flex items-center justify-center hover:scale-105 transition">
+
+    <span class="material-symbols-outlined">smart_toy</span>
+
+  </button>
+
+</div>

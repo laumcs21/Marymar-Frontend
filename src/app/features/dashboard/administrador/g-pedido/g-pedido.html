@@ -1,0 +1,231 @@
+<section class="flex-1 p-10 overflow-y-auto">
+
+  <div class="max-w-7xl mx-auto">
+
+    <!-- HEADER -->
+    <div class="mb-10">
+      <h1 class="text-3xl font-bold text-primary">
+        Gestión de Pedidos
+      </h1>
+      <p class="text-slate-500 mt-2">
+        Consulta y monitorea los pedidos realizados
+      </p>
+    </div>
+
+    <!-- FILTROS -->
+    <div class="flex flex-wrap gap-4 items-end mb-6">
+
+  <!-- FECHA INICIO -->
+  <div class="flex flex-col">
+    <label class="text-sm text-gray-500 mb-1">Fecha inicio</label>
+    <input
+      type="date"
+      [(ngModel)]="filtros.fechaInicio"
+      class="border rounded-lg px-3 h-10 w-48"
+    />
+  </div>
+
+  <!-- FECHA FIN -->
+  <div class="flex flex-col">
+    <label class="text-sm text-gray-500 mb-1">Fecha fin</label>
+    <input
+      type="date"
+      [(ngModel)]="filtros.fechaFin"
+      class="border rounded-lg px-3 h-10 w-48"
+    />
+  </div>
+
+  <!-- ESTADO -->
+  <div class="flex flex-col">
+    <label class="text-sm text-gray-500 mb-1">Estado</label>
+    <select
+      [(ngModel)]="filtros.estado"
+      class="border rounded-lg px-3 h-10 w-48"
+    >
+      <option value="">Todos</option>
+      <option value="CREADO">Creado</option>
+      <option value="PAGADO">Pagado</option>
+    </select>
+  </div>
+
+  <!-- BOTONES -->
+  <div class="flex gap-2">
+
+    <!-- FILTRAR -->
+    <button
+      (click)="aplicarFiltros()"
+      class="bg-primary text-white px-5 py-2.5 rounded-lg font-bold shadow-md"
+    >
+      Filtrar
+    </button>
+
+    <!-- LIMPIAR -->
+    <button
+      (click)="limpiarFiltros()"
+      class="border px-5 py-2.5 rounded-lg font-bold"
+    >
+      Limpiar
+    </button>
+
+  </div>
+
+</div>
+
+    <!-- TABLA -->
+    <div class="bg-white rounded-xl border shadow-sm">
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left">
+
+          <thead class="border-b">
+            <tr>
+              <th class="px-6 py-4">ID</th>
+              <th class="px-6 py-4">Cliente</th>
+              <th class="px-6 py-4">Total</th>
+              <th class="px-6 py-4">Estado</th>
+              <th class="px-6 py-4">Fecha</th>
+              <th class="px-6 py-4">Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody class="divide-y">
+
+            <tr *ngIf="pedidosFiltrados.length === 0">
+              <td colspan="5" class="text-center py-10 text-slate-400">
+                No hay pedidos
+              </td>
+            </tr>
+
+            <tr *ngFor="let p of pedidosFiltrados" class="hover:bg-slate-50">
+
+              <td class="px-6 py-4">#PED-{{ p.id }}</td>
+
+              <td class="px-6 py-4">
+                {{ p.clienteNombre }}
+              </td>
+
+              <td class="px-6 py-4 font-bold text-green-600">
+                $ {{ p.total | number }}
+              </td>
+
+              <td class="px-6 py-4">
+                <span
+                  class="px-3 py-1 rounded-full text-xs font-bold"
+                  [ngClass]="{
+                    'bg-yellow-100 text-yellow-700': p.estado === 'PENDIENTE',
+                    'bg-green-100 text-green-700': p.estado === 'PAGADO',
+                    'bg-red-100 text-red-700': p.estado === 'CANCELADO'
+                  }">
+                  {{ p.estado }}
+                </span>
+              </td>
+
+              <td class="px-6 py-4 text-slate-500">
+                {{ p.fecha | date:'short' }}
+              </td>
+
+              <td class="px-6 py-4">
+              <button
+                (click)="verPedido(p)"
+                class="text-slate-500 hover:text-primary transition"
+                title="Ver detalle">
+
+                <span class="material-symbols-outlined">visibility</span>
+              </button>
+            </td>
+
+            </tr>
+
+          </tbody>
+
+        </table>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<div *ngIf="mostrarModalVista"
+     class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+
+  <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl border p-6">
+
+    <!-- HEADER -->
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-lg font-bold text-primary">
+        Detalle del Pedido #PED-{{ pedidoVista?.id }}
+      </h2>
+
+      <button (click)="cerrarModalVista()"
+              class="text-slate-400 hover:text-primary">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <!-- INFO GENERAL -->
+    <div class="space-y-2 text-sm mb-4">
+
+      <div class="flex justify-between">
+        <span class="text-slate-500">Cliente</span>
+        <span class="font-semibold">{{ pedidoVista?.clienteNombre }}</span>
+      </div>
+
+      <div class="flex justify-between">
+        <span class="text-slate-500">Estado</span>
+        <span class="font-semibold">{{ pedidoVista?.estado }}</span>
+      </div>
+
+      <div class="flex justify-between">
+        <span class="text-slate-500">Fecha</span>
+        <span class="font-semibold">
+          {{ pedidoVista?.fecha | date:'short' }}
+        </span>
+      </div>
+
+    </div>
+
+    <!-- DETALLE PRODUCTOS -->
+    <div class="border rounded-lg overflow-hidden">
+
+      <div class="bg-slate-100 px-4 py-2 font-semibold text-sm">
+        Productos
+      </div>
+
+      <div class="divide-y">
+
+        <div *ngFor="let d of pedidoVista?.detalles"
+             class="flex justify-between px-4 py-2 text-sm">
+
+          <span>
+            {{ d.productoNombre }} x{{ d.cantidad }}
+          </span>
+
+          <span class="font-semibold">
+            ${{ d.subtotal }}
+          </span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- TOTAL -->
+    <div class="flex justify-between mt-4 text-lg font-bold text-primary">
+      <span>Total</span>
+      <span>${{ pedidoVista?.total }}</span>
+    </div>
+
+    <!-- BOTÓN -->
+    <div class="mt-6 flex justify-end">
+      <button
+        (click)="cerrarModalVista()"
+        class="px-4 py-2 border rounded-lg hover:bg-slate-50">
+        Cerrar
+      </button>
+    </div>
+
+  </div>
+</div>

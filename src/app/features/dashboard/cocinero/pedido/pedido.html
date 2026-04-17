@@ -1,0 +1,191 @@
+<section class="flex-1 p-10 overflow-y-auto">
+
+  <div class="max-w-7xl mx-auto">
+
+    <!-- HEADER -->
+    <div class="mb-10">
+      <h1 class="text-3xl font-bold text-primary">
+        Cocina - Pedidos
+      </h1>
+      <p class="text-slate-500 text-sm">
+        Gestión de pedidos en tiempo real
+      </p>
+    </div>
+
+    <!-- TABLERO -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      <!-- 🔸 CREADOS (COLA) -->
+      <div>
+        <h2 class="text-lg font-bold mb-4 text-primary">
+          Cola de pedidos
+        </h2>
+
+        <div *ngIf="pedidosCreados.length === 0"
+             class="text-slate-400 text-sm">
+          No hay pedidos en cola
+        </div>
+
+        <div *ngFor="let p of pedidosCreados; let i = index"
+             class="bg-white p-4 rounded-xl shadow-sm border mb-4 hover:shadow-md transition">
+
+          <!-- HEADER -->
+          <div class="flex justify-between items-center mb-2">
+            <span class="font-bold text-primary">
+              #{{ i + 1 }} - Pedido {{ p.id }}
+            </span>
+
+            <span class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full font-semibold">
+              EN COLA
+            </span>
+          </div>
+
+          <!-- DETALLES -->
+          <div class="text-sm text-slate-600 space-y-1">
+            <div *ngFor="let d of p.detalles">
+              {{ d.productoNombre }} x{{ d.cantidad }}
+            </div>
+          </div>
+
+          <!-- BOTÓN -->
+          <button
+            (click)="preparar(p.id)"
+            class="mt-4 w-full bg-primary text-white py-2 rounded-lg font-semibold hover:opacity-90 transition">
+            Iniciar preparación
+          </button>
+
+        </div>
+      </div>
+
+      <!-- 🔸 EN PREPARACIÓN -->
+      <div>
+        <h2 class="text-lg font-bold mb-4 text-blue-600">
+          En preparación
+        </h2>
+
+        <div *ngIf="pedidosEnPreparacion.length === 0"
+             class="text-slate-400 text-sm">
+          No hay pedidos en preparación
+        </div>
+
+        <div *ngFor="let p of pedidosEnPreparacion"
+             class="bg-white p-4 rounded-xl shadow-sm border mb-4 hover:shadow-md transition">
+
+          <!-- HEADER -->
+          <div class="flex justify-between items-center mb-2">
+            <span class="font-bold text-blue-600">
+              Pedido {{ p.id }}
+            </span>
+
+            <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-semibold">
+              PREPARANDO
+            </span>
+          </div>
+
+          <!-- DETALLES -->
+          <div class="text-sm text-slate-600 space-y-1">
+            <div *ngFor="let d of p.detalles">
+              {{ d.productoNombre }} x{{ d.cantidad }}
+            </div>
+          </div>
+
+          <!-- BOTÓN -->
+          <button
+            (click)="finalizar(p.id)"
+            class="mt-4 w-full bg-green-500 text-white py-2 rounded-lg font-semibold hover:opacity-90 transition">
+            Marcar como listo
+          </button>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- MODAL DETALLE -->
+<div *ngIf="mostrarModalVista"
+     class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+
+  <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl border p-6">
+
+    <!-- HEADER -->
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-lg font-bold text-primary">
+        Detalle del Pedido #PED-{{ pedidoVista?.id }}
+      </h2>
+
+      <button (click)="cerrarModalVista()"
+              class="text-slate-400 hover:text-primary">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <!-- INFO -->
+    <div class="space-y-2 text-sm mb-4">
+
+      <div class="flex justify-between">
+        <span class="text-slate-500">Cliente</span>
+        <span class="font-semibold">{{ pedidoVista?.clienteNombre }}</span>
+      </div>
+
+      <div class="flex justify-between">
+        <span class="text-slate-500">Estado</span>
+        <span class="font-semibold">{{ pedidoVista?.estado }}</span>
+      </div>
+
+      <div class="flex justify-between">
+        <span class="text-slate-500">Fecha</span>
+        <span class="font-semibold">
+          {{ pedidoVista?.fecha | date:'short' }}
+        </span>
+      </div>
+
+    </div>
+
+    <!-- PRODUCTOS -->
+    <div class="border rounded-lg overflow-hidden">
+
+      <div class="bg-slate-100 px-4 py-2 font-semibold text-sm">
+        Productos
+      </div>
+
+      <div class="divide-y">
+
+        <div *ngFor="let d of pedidoVista?.detalles"
+             class="flex justify-between px-4 py-2 text-sm">
+
+          <span>
+            {{ d.productoNombre }} x{{ d.cantidad }}
+          </span>
+
+          <span class="font-semibold">
+            ${{ d.subtotal }}
+          </span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- TOTAL -->
+    <div class="flex justify-between mt-4 text-lg font-bold text-primary">
+      <span>Total</span>
+      <span>${{ pedidoVista?.total }}</span>
+    </div>
+
+    <!-- BOTÓN -->
+    <div class="mt-6 flex justify-end">
+      <button
+        (click)="cerrarModalVista()"
+        class="px-4 py-2 border rounded-lg hover:bg-slate-50">
+        Cerrar
+      </button>
+    </div>
+
+  </div>
+
+</div>

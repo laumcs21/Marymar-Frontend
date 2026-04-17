@@ -4,11 +4,12 @@ import { CommonModule } from '@angular/common';
 import { ProductoService } from '../../../core/services/producto.service';
 import { CarritoService } from '../../../core/services/carrito.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { ChatbotComponent } from '../../chatbot/chatbot';
 
 @Component({
   selector: 'app-cliente',
   standalone: true,
-  imports: [CommonModule, RouterOutlet],
+  imports: [CommonModule, RouterOutlet, ChatbotComponent],
   templateUrl: './cliente.html',
   styleUrls: ['./cliente.css'],
 })

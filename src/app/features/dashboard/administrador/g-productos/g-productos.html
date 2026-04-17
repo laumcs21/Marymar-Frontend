@@ -110,13 +110,13 @@
 
           <div class="flex gap-2">
 
-            <button
+            <button title="editar"
               (click)="editarProducto(prod); $event.stopPropagation()"
               class="p-2 text-slate-400 hover:text-primary transition-colors">
               <span class="material-symbols-outlined">edit</span>
             </button>
 
-            <button
+            <button title="receta"
               (click)="abrirModalReceta(prod); $event.stopPropagation()"
               class="p-2 text-slate-400 hover:text-green-600 transition-colors">
 
@@ -126,7 +126,7 @@
 
             </button>
 
-            <button
+            <button title="activar/desactivar"
               (click)="toggleDisponibilidad(prod); $event.stopPropagation()"
               class="p-2 text-slate-400 hover:text-amber-500 transition-colors">
               <span class="material-symbols-outlined">
@@ -134,7 +134,7 @@
               </span>
             </button>
 
-            <button
+            <button title="eliminar"
               (click)="abrirModalEliminar(prod); $event.stopPropagation()"
               class="p-2 text-slate-400 hover:text-red-500 transition-colors">
               <span class="material-symbols-outlined">delete</span>

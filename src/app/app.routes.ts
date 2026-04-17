@@ -4,10 +4,12 @@ import { AdminComponent } from './features/dashboard/administrador/administrador
 import { ClienteComponent } from './features/dashboard/cliente/cliente';
 import { ClienteGuard } from './core/guards/cliente.guard';
 import { MeseroComponent } from './features/dashboard/mesero/mesero';
+import { CocineroComponent } from './features/dashboard/cocinero/cocinero';
 import { MeseroGuard } from './core/guards/mesero.guard';
 import { VerifyCode } from './features/auth/pages/verify-code/verify-code/verify-code';
 import { OAuthCallbackComponent } from './features/auth/pages/oauth-callback/oauth-callback';
 import { adminGuard } from './core/guards/admin.guard';
+import { CocineroGuard } from './core/guards/cocinero.guard';
 import { GPersonasComponent } from './features/dashboard/administrador/g-personas/g-personas';
 import { GCategoriasComponent } from './features/dashboard/administrador/g-categorias/g-categorias';
 import { GProductosComponent } from './features/dashboard/administrador/g-productos/g-productos';
@@ -94,6 +96,18 @@ export const routes: Routes = [
       loadComponent: () =>
         import('./features/dashboard/administrador/g-mesas/g-mesas')
           .then(m => m.GMesasComponent)
+    },
+    {
+      path: 'g-pedido',
+      loadComponent: () =>
+        import('./features/dashboard/administrador/g-pedido/g-pedido')
+          .then(m => m.GPedidosComponent)
+    },
+    {
+      path: 'g-auditoria',
+      loadComponent: () =>
+        import('./features/dashboard/administrador/g-auditoria/g-auditoria')
+          .then(m => m.GAuditoriaComponent)
     }
   ]
 },
@@ -125,7 +139,6 @@ export const routes: Routes = [
   component: MeseroComponent,
   canActivate: [MeseroGuard],
   children: [
-
     {
       path: '',
       loadComponent: () =>
@@ -147,5 +160,26 @@ export const routes: Routes = [
     import('./features/dashboard/mesero/pedido/pedido')
       .then(m => m.PedidoComponent),
   canActivate: [MeseroGuard]
-}
+},
+{
+  path: 'dashboard/cocinero',
+  component: CocineroComponent,
+  canActivate: [CocineroGuard],
+  children: [
+
+    {
+      path: '',
+      loadComponent: () =>
+        import('./features/dashboard/cocinero/pedido/pedido')
+          .then(m => m.PedidoComponent)
+    },
+
+    {
+      path: 'perfil',
+      loadComponent: () =>
+        import('./features/dashboard/cocinero/perfilCocinero/perfilCocinero')
+          .then(m => m.PerfilCocineroComponent)
+    },
+  ]
+},
 ];

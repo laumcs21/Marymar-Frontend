@@ -1,0 +1,128 @@
+<section class="flex-1 p-10 overflow-y-auto">
+
+  <div class="max-w-7xl mx-auto">
+
+    <!-- HEADER -->
+    <div class="mb-10">
+      <h1 class="text-3xl font-bold text-primary">
+        Auditoría del Sistema
+      </h1>
+      <p class="text-slate-500 mt-2">
+        Historial de acciones realizadas en el sistema
+      </p>
+    </div>
+
+    <!-- FILTROS -->
+<div class="bg-white rounded-xl border shadow-sm p-6 mb-6">
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+
+    <!-- Usuario -->
+    <input
+      type="text"
+      [(ngModel)]="filtros.usuario"
+      placeholder="Usuario"
+      class="h-11 px-4 rounded-lg border border-slate-200 focus:ring-2 focus:ring-primary w-full" />
+
+    <!-- Acción -->
+    <select
+      [(ngModel)]="filtros.accion"
+      class="h-11 px-4 rounded-lg border border-slate-200 focus:ring-2 focus:ring-primary w-full">
+
+      <option value="">Todas las acciones</option>
+      <option value="LOGIN">LOGIN</option>
+      <option value="LOGOUT">LOGOUT</option>
+      <option value="CREAR">CREAR</option>
+      <option value="ACTUALIZAR">ACTUALIZAR</option>
+      <option value="ELIMINAR">ELIMINAR</option>
+    </select>
+
+    <!-- Fecha inicio -->
+    <input
+      type="datetime-local"
+      [(ngModel)]="filtros.fechaInicio"
+      class="h-11 px-4 rounded-lg border border-slate-200 focus:ring-2 focus:ring-primary w-full" />
+
+    <!-- Fecha fin -->
+    <input
+      type="datetime-local"
+      [(ngModel)]="filtros.fechaFin"
+      class="h-11 px-4 rounded-lg border border-slate-200 focus:ring-2 focus:ring-primary w-full" />
+
+    <!-- BOTONES -->
+    <div class="flex gap-2 items-center">
+
+      <button
+        (click)="aplicarFiltros()"
+        class="bg-primary text-white px-5 py-2.5 rounded-lg font-bold shadow-md">
+        Filtrar
+      </button>
+
+      <button
+        (click)="limpiarFiltros()"
+        class="border px-5 py-2.5 rounded-lg font-bold">
+        Limpiar
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+    <!-- TABLA -->
+    <div class="bg-white rounded-xl border shadow-sm">
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left">
+
+          <thead>
+            <tr class="border-b">
+              <th class="px-4 py-3">Usuario</th>
+              <th class="px-4 py-3">Acción</th>
+              <th class="px-4 py-3">Entidad</th>
+              <th class="px-4 py-3">Detalle</th>
+              <th class="px-4 py-3">Fecha</th>
+            </tr>
+          </thead>
+
+          <tbody class="divide-y">
+
+            <tr *ngFor="let log of logsFiltrados" class="hover:bg-slate-50">
+
+              <td class="px-4 py-3">{{ log.usuario }}</td>
+
+              <td class="px-4 py-3">
+                <span class="badge">
+                  {{ log.accion }}
+                </span>
+              </td>
+
+              <td class="px-4 py-3">{{ log.entidad }}</td>
+
+              <td class="px-4 py-3 text-sm text-slate-600">
+                {{ log.detalle }}
+              </td>
+
+              <td class="px-4 py-3 text-sm text-slate-500">
+                {{ log.fecha | date:'short' }}
+              </td>
+
+            </tr>
+
+            <tr *ngIf="logsFiltrados.length === 0">
+              <td colspan="5" class="text-center py-10 text-slate-400">
+                No hay registros
+              </td>
+            </tr>
+
+          </tbody>
+
+        </table>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>

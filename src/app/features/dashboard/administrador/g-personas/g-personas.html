@@ -46,6 +46,7 @@
     <option value="ADMINISTRADOR">Administrador</option>
     <option value="MESERO">Mesero</option>
     <option value="CLIENTE">Cliente</option>
+    <option value="COCINERO">Cocinero</option>
   </select>
 
   <!-- LIMPIAR -->
@@ -244,7 +245,7 @@
         <!-- ERROR EDAD -->
         <div *ngIf="form.errors?.['menorEdadRol']"
              class="text-red-500 text-sm">
-          Los administradores y meseros deben ser mayores de edad
+          Los administradores, meseros y cocineros deben ser mayores de edad
         </div>
 
         <!-- ROL -->
@@ -253,6 +254,7 @@
             <option value="">Seleccione rol</option>
             <option value="ADMINISTRADOR">Administrador</option>
             <option value="MESERO">Mesero</option>
+            <option value="COCINERO">Cocinero</option>
             <option value="CLIENTE" *ngIf="modoEdicion">Cliente</option>
           </select>
         </div>
@@ -270,7 +272,7 @@
       </div>
 
         <!-- SALARIO -->
-        <div *ngIf="form.get('rol')?.value === 'ADMINISTRADOR' || form.get('rol')?.value === 'MESERO'">
+        <div *ngIf="form.get('rol')?.value === 'ADMINISTRADOR' || form.get('rol')?.value === 'MESERO' || form.get('rol')?.value === 'COCINERO'">
           <div class="input-group">
             <input formControlName="salario"
                    type="number"

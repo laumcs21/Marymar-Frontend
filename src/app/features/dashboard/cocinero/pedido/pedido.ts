@@ -5,18 +5,20 @@ import { PedidoService} from '../../../../core/services/pedido.service';
 import { Pedido } from '../../../../core/models/pedido.model';
 
 @Component({
-  selector: 'app-g-pedidos',
+  selector: 'app-pedido',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './g-pedido.html',
-  styleUrls: ['./g-pedido.css']
+  templateUrl: './pedido.html',
+  styleUrls: ['./pedido.css']
 })
-export class GPedidosComponent implements OnInit {
+export class PedidoComponent implements OnInit {
 
   pedidos: Pedido[] = [];
   pedidosFiltrados: Pedido[] = [];
   pedidoVista: any = null;
   mostrarModalVista = false;
+  pedidosCreados: Pedido[] = [];
+  pedidosEnPreparacion: Pedido[] = [];
 
   filtros = {
     fechaInicio: '',
@@ -32,15 +34,14 @@ export class GPedidosComponent implements OnInit {
     this.cargarPedidos();
   }
 
-  cargarPedidos() {
-    this.cargando = true;
+    cargarPedidos() {
+      this.pedidoService.obtenerCola('CREADO')
+        .subscribe(data => this.pedidosCreados = data);
 
-    this.pedidoService.obtenerTodos().subscribe(data => {
-      this.pedidos = data;
-      this.pedidosFiltrados = data;
-      this.cargando = false;
-    });
-  }
+      this.pedidoService.obtenerCola('EN_PREPARACION')
+        .subscribe(data => this.pedidosEnPreparacion = data);
+    }
+
 
   aplicarFiltros() {
     this.cargando = true;
@@ -64,6 +65,16 @@ export class GPedidosComponent implements OnInit {
   verPedido(pedido: any) {
   this.pedidoVista = pedido;
   this.mostrarModalVista = true;
+}
+
+preparar(id: number) {
+  this.pedidoService.cambiarEstado(id, 'EN_PREPARACION')
+    .subscribe(() => this.cargarPedidos());
+}
+
+finalizar(id: number) {
+  this.pedidoService.cambiarEstado(id, 'LISTO')
+    .subscribe(() => this.cargarPedidos());
 }
 
 cerrarModalVista() {

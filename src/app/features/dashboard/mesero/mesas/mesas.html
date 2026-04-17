@@ -23,25 +23,48 @@
     </div>
   </div>
 
-  <!-- Legend -->
-  <div class="flex gap-6 items-center bg-white/40 dark:bg-slate-800/40 p-4 rounded-xl border border-primary/5">
-    <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Estados:</span>
+<!-- Legend -->
+<div class="flex flex-wrap gap-6 items-center bg-white/40 dark:bg-slate-800/40 p-4 rounded-xl border border-primary/5">
 
-    <div class="flex items-center gap-2">
-      <div class="size-4 rounded-full bg-status-available border border-green-300"></div>
-      <span class="text-sm font-medium">Disponible</span>
-    </div>
+  <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Estados:</span>
 
-    <div class="flex items-center gap-2">
-      <div class="size-4 rounded-full bg-primary"></div>
-      <span class="text-sm font-medium">Ocupada</span>
-    </div>
-
-    <div class="flex items-center gap-2">
-      <div class="size-4 rounded-full bg-accent-orange"></div>
-      <span class="text-sm font-medium">Cuenta Pedida</span>
-    </div>
+  <!-- DISPONIBLE -->
+  <div class="flex items-center gap-2">
+    <div class="size-4 rounded-full bg-status-available border border-green-300"></div>
+    <span class="text-sm font-medium">Disponible</span>
   </div>
+
+  <!-- CREADO -->
+  <div class="flex items-center gap-2">
+    <div class="size-4 rounded-full bg-estado-creado"></div>
+    <span class="text-sm font-medium">Creado</span>
+  </div>
+
+  <!-- EN PREPARACIÓN -->
+  <div class="flex items-center gap-2">
+    <div class="size-4 rounded-full bg-estado-preparacion"></div>
+    <span class="text-sm font-medium">En preparación</span>
+  </div>
+
+  <!-- LISTO -->
+  <div class="flex items-center gap-2">
+    <div class="size-4 rounded-full bg-estado-listo"></div>
+    <span class="text-sm font-medium">Listo</span>
+  </div>
+
+  <!-- ENTREGADO -->
+  <div class="flex items-center gap-2">
+    <div class="size-4 rounded-full bg-estado-entregado"></div>
+    <span class="text-sm font-medium">Entregado</span>
+  </div>
+
+  <!-- CUENTA PEDIDA -->
+  <div class="flex items-center gap-2">
+    <div class="size-4 rounded-full bg-estado-cuenta"></div>
+    <span class="text-sm font-medium">Cuenta Pedida</span>
+  </div>
+
+</div>
 
   <!-- Tables Grid -->
   <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
@@ -61,7 +84,7 @@
       </div>
 
       <span class="font-bold text-sm text-center">
-        {{ m.estado === 'CUENTA_PEDIDA' ? 'Cuenta Pedida' : m.estado }}
+        {{formatearEstado(m.estado)}}
       </span>
 
       <span class="text-xs font-medium opacity-80">
@@ -108,14 +131,6 @@
         <p class="text-2xl font-bold text-primary">{{ totalCuentaPedida() }}</p>
         <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Cuentas p/ Cobrar</p>
       </div>
-    </div>
-
-    <div class="bg-primary p-6 rounded-2xl text-white flex items-center justify-between cursor-pointer hover:bg-primary/90 transition-colors">
-      <div>
-        <p class="text-sm font-bold">Abrir Comanda</p>
-        <p class="text-xs opacity-70">Selecciona mesa primero</p>
-      </div>
-      <span class="material-symbols-outlined">add_circle</span>
     </div>
   </div>
 

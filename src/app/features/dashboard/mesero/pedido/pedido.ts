@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -12,7 +12,6 @@ import { MesaService } from '../../../../core/services/mesa.service';
 import { Pedido } from '../../../../core/models/pedido.model';
 import { Producto } from '../../../../core/models/producto.model';
 
-
 @Component({
   selector: 'app-pedido',
   standalone: true,
@@ -21,6 +20,7 @@ import { Producto } from '../../../../core/models/producto.model';
 })
 export class PedidoComponent implements OnInit {
 
+  @ViewChild('scrollPedido') scrollPedido!: ElementRef;
   pedido!: Pedido;
   mesaId!: number;
 
@@ -41,8 +41,15 @@ export class PedidoComponent implements OnInit {
 
   mostrarModalError = false;
   mensajeError = '';
-  productosActivos: Producto[] = []
-  
+  productosActivos: Producto[] = [];
+
+  scrollTopGuardado = 0;
+  autoScroll = false;
+
+  mostrarModalEstado = false;
+  mensajeEstado = '';
+
+  tituloError = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -65,7 +72,24 @@ export class PedidoComponent implements OnInit {
   // =========================
   cargarPedido() {
     this.pedidoService.obtenerPorMesa(this.mesaId)
-      .subscribe(data => this.pedido = data);
+      .subscribe(data => {
+
+        const scrollActual = this.scrollPedido?.nativeElement.scrollTop || 0;
+
+        this.pedido = data;
+
+        setTimeout(() => {
+          if (!this.autoScroll && this.scrollPedido) {
+            this.scrollPedido.nativeElement.scrollTop = scrollActual;
+          }
+
+          if (this.autoScroll) {
+            this.scrollToBottom();
+            this.autoScroll = false;
+          }
+        }, 0);
+
+      });
   }
 
   abrirPedido() {
@@ -89,7 +113,7 @@ export class PedidoComponent implements OnInit {
   // =========================
   cargarProductos() {
     this.productoService.obtenerTodos().subscribe(data => {
-      this.productos = data.filter(p => p.activo === true)
+      this.productos = data.filter(p => p.activo === true);
 
       this.categorias = [
         ...new Map(data.map(p => [p.categoriaId, {
@@ -115,20 +139,25 @@ export class PedidoComponent implements OnInit {
     this.categoriaSeleccionada = catId;
   }
 
-agregarProducto(p: any) {
-  this.pedidoService.agregarProducto(this.pedido.id, p.id)
-    .subscribe({
-      next: () => this.cargarPedido(),
-
-      error: (err) => {
-        this.mostrarErrorStock(err.error?.message || 'Stock insuficiente');
-      }
-    });
-}
+  agregarProducto(p: any) {
+    this.autoScroll = true;
+    this.pedidoService.agregarProducto(this.pedido.id, p.id)
+      .subscribe({
+        next: () => this.cargarPedido(),
+        error: (err) => {
+          this.mostrarErrorStock(err.error?.message || 'Stock insuficiente');
+        }
+      });
+  }
 
   disminuir(d: any) {
+    this.guardarScroll();
+
     this.pedidoService.disminuirProducto(this.pedido.id, d.productoId)
-      .subscribe(() => this.cargarPedido());
+      .subscribe(() => {
+        this.cargarPedido();
+        this.restaurarScroll();
+      });
   }
 
   eliminar(d: any) {
@@ -137,16 +166,22 @@ agregarProducto(p: any) {
   }
 
   mostrarErrorStock(msg: string) {
-  this.mensajeError = msg;
-  this.mostrarModalError = true;
-}
+    this.tituloError= 'Stock Insuficiente'
+    this.mensajeError = msg;
+    this.mostrarModalError = true;
+  }
 
   cambiarCantidad(d: any, cambio: number) {
+    this.guardarScroll();
+
     if (cambio === -1) {
       this.disminuir(d);
     } else {
       this.pedidoService.agregarProducto(this.pedido.id, d.productoId)
-        .subscribe(() => this.cargarPedido());
+        .subscribe(() => {
+          this.cargarPedido();
+          this.restaurarScroll();
+        });
     }
   }
 
@@ -161,10 +196,35 @@ agregarProducto(p: any) {
   // PAGO
   // =========================
   pagar() {
-
     this.errorPago = null;
     this.exitoPago = null;
 
+if (this.pedido?.estado !== 'CUENTA_PEDIDA') {
+
+  let mensaje = '';
+
+  switch (this.pedido?.estado) {
+    case 'CREADO':
+      mensaje = 'El pedido aún no ha sido preparado';
+      break;
+    case 'EN_PREPARACION':
+      mensaje = 'El pedido aún está en preparación';
+      break;
+    case 'LISTO':
+      mensaje = 'Debes marcar el pedido como ENTREGADO primero';
+      break;
+    case 'ENTREGADO':
+      mensaje = 'Debes generar la factura para poder proceder al pago';
+      break;
+    default:
+      mensaje = 'No se puede pagar en este estado';
+  }
+
+  this.tituloError= 'Acción no permitida';
+  this.mensajeError = mensaje;
+  this.mostrarModalError = true;
+  return;
+}
     if (!this.metodoPago) {
       this.errorPago = 'Debes seleccionar un método de pago';
       return;
@@ -237,15 +297,98 @@ agregarProducto(p: any) {
     this.mostrarModalCancelar = false;
   }
 
-  generarFactura() {
+generarFactura() {
   if (!this.pedido?.id) return;
 
+  if (this.pedido.estado !== 'ENTREGADO' && this.pedido.estado !== 'CUENTA_PEDIDA') {
+
+    let mensaje = '';
+
+    switch (this.pedido.estado) {
+      case 'CREADO':
+        mensaje = 'El pedido aún no ha sido preparado';
+        break;
+
+      case 'EN_PREPARACION':
+        mensaje = 'El pedido aún está en preparación';
+        break;
+
+      case 'LISTO':
+        mensaje = 'Se debe entregar primero el pedido';
+        break;
+
+      default:
+        mensaje = 'No se puede generar factura en este estado';
+    }
+
+    this.tituloError = 'Acción no permitida';
+    this.mensajeError = mensaje;
+    this.mostrarModalError = true;
+    return;
+  }
+
   this.pedidoService.descargarFactura(this.pedido.id);
+
+  this.pedido.estado = 'CUENTA_PEDIDA';
+
+  setTimeout(() => {
+    this.cargarPedido();
+  }, 500);
 }
 
   generarComanda() {
     if (!this.pedido?.id) return;
-
     this.pedidoService.descargarComanda(this.pedido.id);
+  }
+
+  // =========================
+  // ENTREGAR PEDIDO
+  // =========================
+  entregarPedido() {
+
+    if (this.pedido?.estado !== 'LISTO') {
+      this.mensajeEstado = 'No se puede marcar como entregado porque el estado previo no es compatible.';
+      this.mostrarModalEstado = true;
+      return;
+    }
+
+    this.pedidoService.cambiarEstado(this.pedido.id, 'ENTREGADO')
+      .subscribe({
+        next: () => this.cargarPedido(),
+        error: (err) => {
+          this.mensajeEstado = err.error?.message || 'No se pudo cambiar el estado del pedido.';
+          this.mostrarModalEstado = true;
+        }
+      });
+  }
+
+  // =========================
+  // SCROLL
+  // =========================
+  scrollToBottom() {
+    setTimeout(() => {
+      if (this.scrollPedido) {
+        const el = this.scrollPedido.nativeElement;
+        el.scrollTop = el.scrollHeight;
+      }
+    }, 100);
+  }
+
+  guardarScroll() {
+    if (this.scrollPedido) {
+      this.scrollTopGuardado = this.scrollPedido.nativeElement.scrollTop;
+    }
+  }
+
+  restaurarScroll() {
+    setTimeout(() => {
+      if (this.scrollPedido) {
+        this.scrollPedido.nativeElement.scrollTop = this.scrollTopGuardado;
+      }
+    }, 50);
+  }
+
+  trackByDetalle(index: number, item: any) {
+    return item.id;
   }
 }

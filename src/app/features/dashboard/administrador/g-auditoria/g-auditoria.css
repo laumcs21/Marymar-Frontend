@@ -1,0 +1,15 @@
+.input {
+  @apply w-full h-11 px-3 rounded-lg border border-slate-200 text-sm;
+}
+
+.btn-primary {
+  @apply bg-primary text-white px-5 py-2 rounded-lg font-bold;
+}
+
+.btn-secondary {
+  @apply bg-slate-200 px-5 py-2 rounded-lg font-bold;
+}
+
+.badge {
+  @apply px-2 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary;
+}

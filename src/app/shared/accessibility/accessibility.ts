@@ -13,6 +13,7 @@ export class AccessibilityComponent {
 
   open = false;
   fontScale = 1;
+  isDragging = false;
 
   toggleMenu() {
     this.open = !this.open;
@@ -48,4 +49,25 @@ export class AccessibilityComponent {
       this.fontScale.toFixed(1)
     );
   }
+
+  startDrag(event: MouseEvent) {
+  this.isDragging = true;
+  document.addEventListener('mousemove', this.onDrag);
+  document.addEventListener('mouseup', this.stopDrag);
+}
+
+onDrag = (event: MouseEvent) => {
+  if (!this.isDragging) return;
+
+  const wrapper = document.querySelector('.accessibility-wrapper') as HTMLElement;
+
+  wrapper.style.left = event.clientX + 'px';
+  wrapper.style.top = event.clientY + 'px';
+};
+
+stopDrag = () => {
+  this.isDragging = false;
+  document.removeEventListener('mousemove', this.onDrag);
+  document.removeEventListener('mouseup', this.stopDrag);
+};
 }

@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MesaService } from '../../../../core/services/mesa.service';
+import { PedidoService } from '../../../../core/services/pedido.service';
 import { Mesa } from '../../../../core/models/mesa.model';
+import { Pedido } from '../../../../core/models/pedido.model';
 
 @Component({
   selector: 'app-mesas',
@@ -20,7 +22,8 @@ export class MesasComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private mesaService: MesaService
+    private mesaService: MesaService,
+    private pedidoService: PedidoService
   ) {}
 
   ngOnInit(): void {
@@ -30,16 +33,33 @@ export class MesasComponent implements OnInit {
   cargarMesas() {
     this.mesaService.obtenerTodas().subscribe({
       next: (data) => {
-        console.log('DATA Backend:', data);
         const activas = (data || []).filter(m => m.activa);
 
-        this.mesas = activas;
-        this.salon = activas.slice(0, 4);
-        this.terraza = activas.slice(4);
+        this.pedidoService.obtenerTodos().subscribe({
+          next: (pedidos: Pedido[]) => {
+            this.mesas = activas.map((m: Mesa) => {
+              const pedidoActivo = pedidos.find((p: Pedido) =>
+                p.numeroMesa === m.numero &&
+                p.estado !== 'PAGADO' &&
+                p.estado !== 'CANCELADO'
+              );
 
-        console.log('Mesas activas:', activas);
-        console.log('Salón:', this.salon);
-        console.log('Terraza:', this.terraza);
+              return {
+                ...m,
+                estado: pedidoActivo ? pedidoActivo.estado : 'DISPONIBLE'
+              };
+            });
+
+            this.salon = this.mesas.slice(0, 4);
+            this.terraza = this.mesas.slice(4);
+          },
+          error: (err) => {
+            console.error('Error cargando pedidos:', err);
+            this.mesas = activas;
+            this.salon = activas.slice(0, 4);
+            this.terraza = activas.slice(4);
+          }
+        });
       },
       error: (err) => {
         console.error('Error cargando mesas:', err);
@@ -63,10 +83,22 @@ export class MesasComponent implements OnInit {
     switch (mesa.estado) {
       case 'DISPONIBLE':
         return 'bg-status-available border-2 border-green-200 text-primary';
-      case 'OCUPADA':
+
+      case 'CREADO':
         return 'bg-primary text-white';
+
+      case 'EN_PREPARACION':
+        return 'bg-estado-preparacion text-white';
+
+      case 'LISTO':
+        return 'bg-estado-listo text-black';
+
+      case 'ENTREGADO':
+        return 'bg-estado-entregado text-white';
+
       case 'CUENTA_PEDIDA':
-        return 'bg-accent-orange text-white';
+        return 'bg-estado-cuenta text-white';
+
       default:
         return 'bg-white text-primary border border-primary/10';
     }
@@ -76,12 +108,29 @@ export class MesasComponent implements OnInit {
     switch (mesa.estado) {
       case 'DISPONIBLE':
         return `${mesa.capacidad ?? 4} pax`;
-      case 'OCUPADA':
-        return 'En servicio';
+      case 'CREADO':
+        return 'Pedido recibido';
+      case 'EN_PREPARACION':
+        return 'En cocina';
+      case 'LISTO':
+        return 'Listo para servir';
+      case 'ENTREGADO':
+        return 'Servido';
       case 'CUENTA_PEDIDA':
         return 'Pendiente cobro';
       default:
         return '';
+    }
+  }
+
+  formatearEstado(estado: string): string {
+    switch (estado) {
+      case 'CUENTA_PEDIDA':
+        return 'Cuenta Pedida';
+      case 'EN_PREPARACION':
+        return 'En preparación';
+      default:
+        return estado;
     }
   }
 
