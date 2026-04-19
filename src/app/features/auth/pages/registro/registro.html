@@ -13,15 +13,38 @@
         <input
           formControlName="numeroIdentificacion"
           placeholder="Identificación"
+          maxlength="15"
+          inputmode="numeric"
           autocomplete="off"
+          (focus)="mostrarAyudaIdentificacion=true"
+          (blur)="mostrarAyudaIdentificacion=false"
+          (input)="limpiarNoNumeros()"
         />
         <label>Identificación</label>
       </div>
-      <div class="error"
-          *ngIf="(form.get('numeroIdentificacion')?.touched || formEnviado)
-                  && form.get('numeroIdentificacion')?.invalid">
+
+      <div *ngIf="mostrarAyudaIdentificacion"
+     class="input-help">
+  Este campo únicamente acepta números, y tiene máximo 15 dígitos.
+</div>
+
+    <div class="error"
+    *ngIf="(form.get('numeroIdentificacion')?.touched || formEnviado)
+            && form.get('numeroIdentificacion')?.invalid">
+
+      <span *ngIf="form.get('numeroIdentificacion')?.errors?.['required']">
         Campo obligatorio
-      </div>
+      </span>
+
+      <span *ngIf="form.get('numeroIdentificacion')?.errors?.['pattern']">
+        Solo se permiten números
+      </span>
+
+      <span *ngIf="form.get('numeroIdentificacion')?.errors?.['maxlength']">
+        Máximo 15 dígitos
+      </span>
+
+    </div>
 
       <!-- Nombre -->
       <div class="input-group">
@@ -210,6 +233,31 @@
     <div *ngIf="serverError" class="server-error">
       {{ serverError }}
     </div>
+
+  </div>
+</div>
+
+<!-- MODAL ÉXITO -->
+<div *ngIf="mostrarModalExito"
+     class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+
+  <div class="bg-white p-6 rounded-xl shadow-lg w-80 text-center">
+
+    <span class="material-symbols-outlined text-green-600 text-5xl mb-3">
+      check_circle
+    </span>
+
+    <h2 class="text-lg font-bold mb-2">Registro exitoso</h2>
+
+    <p class="text-gray-600 mb-4">
+      Tu cuenta fue creada correctamente 🎉
+    </p>
+
+    <button
+      (click)="irALoginDesdeModal()"
+      class="bg-green-600 text-white px-4 py-2 rounded w-full">
+      Aceptar
+    </button>
 
   </div>
 </div>

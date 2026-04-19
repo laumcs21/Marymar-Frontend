@@ -42,6 +42,9 @@ export class OAuthCallbackComponent implements OnInit {
     else if (rol === 'COCINERO') {
       this.router.navigate(['/dashboard/cocinero']);
     } 
+    else if (rol === 'BODEGUERO') {
+      this.router.navigate(['/dashboard/bodeguero']);
+    } 
     else {
       this.router.navigate(['/login']);
     }

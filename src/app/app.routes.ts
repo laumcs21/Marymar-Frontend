@@ -21,6 +21,8 @@ import { ResetPasswordComponent } from './features/auth/pages/reset-password/res
 import { PoliticaComponent } from './features/auth/pages/politica/politica';
 import { MenuComponent } from './features/dashboard/cliente/menu/menu';
 import { CarritoComponent } from './features/dashboard/cliente/carrito/carrito';
+import { BodegueroComponent } from './features/dashboard/bodeguero/bodeguero';
+import { BodegueroGuard } from './core/guards/bodeguero.guard';
 
 export const routes: Routes = [
   {
@@ -181,5 +183,32 @@ export const routes: Routes = [
           .then(m => m.PerfilCocineroComponent)
     },
   ]
-},
+},{
+  path: 'dashboard/bodeguero',
+  component: BodegueroComponent,
+  canActivate: [BodegueroGuard],
+children: [
+
+  {
+    path: '',
+    loadComponent: () =>
+      import('./features/dashboard/bodeguero/inventario/inventario')
+        .then(m => m.InventarioBodegueroComponent)
+  },
+
+  {
+    path: 'inventario',
+    loadComponent: () =>
+      import('./features/dashboard/bodeguero/inventario/inventario')
+        .then(m => m.InventarioBodegueroComponent)
+  },
+
+  {
+    path: 'perfilBodeguero',
+    loadComponent: () =>
+      import('./features/dashboard/bodeguero/perfilBodeguero/perfilBodeguero')
+        .then(m => m.PerfilBodegueroComponent)
+  }
+]
+}
 ];

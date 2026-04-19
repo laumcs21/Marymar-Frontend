@@ -79,7 +79,7 @@ export class GPersonasComponent implements OnInit {
       const salario = this.form.get('salario')!;
       salario.clearValidators();
 
-      if (rol === 'ADMINISTRADOR' || rol === 'MESERO'|| rol === 'COCINERO') {
+      if (rol === 'ADMINISTRADOR' || rol === 'MESERO'|| rol === 'COCINERO'|| rol === 'BODEGUERO') {
         salario.setValidators([Validators.required, Validators.min(0)]);
       }
 
@@ -226,6 +226,7 @@ private manejarErrorBackend(err: any) {
       case 'MESERO': return 'Mesero';
       case 'CLIENTE': return 'Cliente';
       case 'COCINERO': return 'Cocinero';
+      case 'BODEGUERO': return 'Bodeguero';
       default: return rol;
     }
   }
@@ -263,7 +264,7 @@ private manejarErrorBackend(err: any) {
     const fecha = group.get('fechaNacimiento')?.value;
 
     if (!rol || !fecha) return null;
-    if (rol !== 'ADMINISTRADOR' && rol !== 'MESERO' && rol !== 'COCINERO') return null;
+    if (rol !== 'ADMINISTRADOR' && rol !== 'MESERO' && rol !== 'COCINERO' && rol !== 'BODEGUERO') return null;
 
     const nacimiento = new Date(fecha);
     const hoy = new Date();

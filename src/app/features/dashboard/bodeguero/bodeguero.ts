@@ -6,20 +6,19 @@ import { AuthService } from '../../../core/services/auth.service';
 import { InventarioService } from '../../../core/services/inventario.service';
 
 @Component({
-  selector: 'app-cocinero',
+  selector: 'app-bodeguero',
   standalone: true,
   imports: [CommonModule, RouterOutlet],
-  templateUrl: './cocinero.html',
-  styleUrls: ['./cocinero.css'],
+  templateUrl: './bodeguero.html',
+  styleUrls: ['./bodeguero.css'],
 })
-export class CocineroComponent implements OnInit {
+export class BodegueroComponent implements OnInit {
 
-  nombreCocinero = '';
-
-  // 🔥 IGUAL QUE LOS OTROS
+  nombreBodeguero = '';
   notificaciones: any[] = [];
   mostrarPanelNotificaciones = false;
   hayNotificaciones = false;
+
   private intervaloNotificaciones: any;
 
   constructor(
@@ -52,10 +51,14 @@ export class CocineroComponent implements OnInit {
     this.mostrarPanelNotificaciones = false;
   }
 
+  irInventario() {
+    this.router.navigate(['/dashboard/bodeguero']);
+  }
+
   cargarPerfil() {
     this.personaService.miPerfil().subscribe({
       next: (data) => {
-        this.nombreCocinero = data.nombre;
+        this.nombreBodeguero = data.nombre;
       },
       error: (err) => {
         console.error('Error cargando perfil:', err);
@@ -64,25 +67,18 @@ export class CocineroComponent implements OnInit {
   }
 
   irPerfil() {
-    this.router.navigate(['/dashboard/cocinero/perfil']);
+    this.router.navigate(['/dashboard/bodeguero/perfilBodeguero']);
   }
 
-  irPedidos() {
-    this.router.navigate(['/dashboard/cocinero']);
+  cargarNotificaciones() {
+    this.inventarioService.obtenerNotificaciones().subscribe({
+      next: data => {
+        this.notificaciones = data;
+        this.hayNotificaciones = data.length > 0;
+      },
+      error: err => console.error(err)
+    });
   }
-
-cargarNotificaciones() {
-  this.inventarioService.obtenerNotificaciones().subscribe({
-    next: data => {
-      this.notificaciones = data.filter(
-        n => n.tipo === 'COCINA_BAJA' || n.tipo === 'POR_VENCER'
-      );
-
-      this.hayNotificaciones = this.notificaciones.length > 0;
-    },
-    error: err => console.error(err)
-  });
-}
 
   logout() {
     this.authService.logout();

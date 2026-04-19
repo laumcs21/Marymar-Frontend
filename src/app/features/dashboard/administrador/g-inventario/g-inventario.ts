@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { InventarioService } from '../../../../core/services/inventario.service';
 import { InsumoService } from '../../../../core/services/insumo.service';
 import {
+  InventarioBodegueroDTO,
   InventarioCreateDTO,
   InventarioResponseDTO,
   InventarioUpdateDTO
@@ -22,9 +23,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 })
 export class GInventarioComponent implements OnInit {
 
-  inventario: InventarioResponseDTO[] = [];
+  // ================== LISTAS ==================
+  inventario: any[] = [];
   insumos: InsumoResponseDTO[] = [];
 
+  // ================== CREAR ==================
   nuevoInsumo: InsumoCreateDTO = {
     nombre: '',
     unidad: ''
@@ -35,43 +38,74 @@ export class GInventarioComponent implements OnInit {
     stock: 0
   };
 
-  inventarioSeleccionado!: InventarioResponseDTO;
+  // ================== SELECCION ==================
+  inventarioSeleccionado!: any;
   stockEditando: number = 0;
 
+  // ================== MODALES ==================
   modalInsumo = false;
   modalInventario = false;
   mostrarModalEliminar = false;
   modalEditarStock = false;
 
+  mostrarIngreso = false;
+  mostrarSurtir = false;
+  mostrarModalLotes = false;
+
+  // ================== ELIMINAR ==================
   inventarioAEliminar: InventarioResponseDTO | null = null;
   eliminando = false;
 
   mostrarModalEliminarInsumo = false;
   insumoAEliminar: InsumoResponseDTO | null = null;
 
+  // ================== ERRORES ==================
   errorInsumo: string = '';
   errorInventario: string = '';
 
+  // ================== FORMULARIO ==================
   insumoEditandoId: number | null = null;
-
   modoFormulario: 'crear' | 'editar' | null = null;
 
+  // ================== BUSQUEDA ==================
   busquedaInventario: string = '';
   busquedaInsumo: string = '';
+
+  // ================== LOTES ==================
+  lotes: any[] = [];
+  filtroUbicacion: string = '';
+  filtroFecha: string = '';
+
+  // ================== INGRESO / SURTIR ==================
+  cantidad: number | null = null;
+  fecha = '';
+  fechaMin: string = '';
+  mostrarLotes = false;
+  mostrarIngresoGlobal = false;
+
+
+  insumoSeleccionado: any;
+  insumoIdSeleccionado: number | null = null;
+  
+
 
   constructor(
     private inventarioService: InventarioService,
     private insumoService: InsumoService
   ) {}
 
+  // ================== INIT ==================
   ngOnInit(): void {
-    this.cargarInventario();
-    this.cargarInsumos();
+    this.cargarInsumosYLuegoInventario();
+
+    const hoy = new Date();
+    this.fechaMin = hoy.toISOString().split('T')[0];
   }
 
+  // ================== CARGA ==================
   cargarInventario() {
-    this.inventarioService.obtenerInventario().subscribe({
-      next: data => this.inventario = data,
+    this.inventarioService.obtenerVistaBodeguero().subscribe({
+      next: data => this.inventario = this.unirInventarioConInsumos(data),
       error: err => console.error(err)
     });
   }
@@ -83,65 +117,48 @@ export class GInventarioComponent implements OnInit {
     });
   }
 
+  // ================== INSUMOS ==================
   abrirModalInsumo() {
     this.modalInsumo = true;
     this.cancelarFormularioInsumo();
   }
 
-  abrirModalInventario() {
-    this.modalInventario = true;
-  }
-
-  cerrarModal() {
+  cerrarModalInsumo() {
     this.modalInsumo = false;
-    this.modalInventario = false;
     this.cancelarFormularioInsumo();
-    this.errorInventario = '';
   }
 
   abrirCrearInsumo() {
     this.modoFormulario = 'crear';
-
-    this.nuevoInsumo = {
-      nombre: '',
-      unidad: ''
-    };
-
+    this.nuevoInsumo = { nombre: '', unidad: '' };
     this.errorInsumo = '';
   }
 
   editarInsumo(insumo: InsumoResponseDTO) {
-
     this.modoFormulario = 'editar';
-
     this.insumoEditandoId = insumo.id;
 
     this.nuevoInsumo = {
       nombre: insumo.nombre,
       unidad: insumo.unidad
     };
-
   }
 
   guardarInsumo() {
 
     if (this.modoFormulario === 'crear') {
-
       this.insumoService.crearInsumo(this.nuevoInsumo).subscribe({
         next: () => {
           this.cargarInsumos();
           this.cancelarFormularioInsumo();
         },
         error: err => {
-          this.errorInsumo =
-            err.error?.message || 'No se pudo crear el insumo';
+          this.errorInsumo = err.error?.message || 'Error';
         }
       });
-
     }
 
     if (this.modoFormulario === 'editar' && this.insumoEditandoId !== null) {
-
       this.insumoService.actualizarInsumo(
         this.insumoEditandoId,
         this.nuevoInsumo
@@ -151,33 +168,30 @@ export class GInventarioComponent implements OnInit {
           this.cancelarFormularioInsumo();
         },
         error: err => {
-          this.errorInsumo =
-            err.error?.message || 'No se pudo actualizar el insumo';
+          this.errorInsumo = err.error?.message || 'Error';
         }
       });
-
     }
-
   }
 
   cancelarFormularioInsumo() {
-
     this.modoFormulario = null;
-
     this.insumoEditandoId = null;
-
-    this.nuevoInsumo = {
-      nombre: '',
-      unidad: ''
-    };
-
+    this.nuevoInsumo = { nombre: '', unidad: '' };
     this.errorInsumo = '';
+  }
 
+  // ================== INVENTARIO ==================
+  abrirModalInventario() {
+    this.modalInventario = true;
+  }
+
+  cerrarModal() {
+    this.modalInventario = false;
+    this.errorInventario = '';
   }
 
   crearInventario() {
-    this.errorInventario = '';
-
     this.inventarioService.crearInventario(this.nuevoInventario).subscribe({
       next: () => {
         this.nuevoInventario = { insumoId: 0, stock: 0 };
@@ -185,8 +199,7 @@ export class GInventarioComponent implements OnInit {
         this.cerrarModal();
       },
       error: err => {
-        this.errorInventario =
-          err.error?.message || 'No se pudo registrar el inventario';
+        this.errorInventario = err.error?.message || 'Error';
       }
     });
   }
@@ -205,12 +218,9 @@ export class GInventarioComponent implements OnInit {
     this.inventarioService.actualizarStock(
       this.inventarioSeleccionado.id,
       dto
-    ).subscribe({
-      next: () => {
-        this.cargarInventario();
-        this.modalEditarStock = false;
-      },
-      error: err => console.error(err)
+    ).subscribe(() => {
+      this.cargarInventario();
+      this.modalEditarStock = false;
     });
   }
 
@@ -218,24 +228,21 @@ export class GInventarioComponent implements OnInit {
     this.modalEditarStock = false;
   }
 
+  // ================== ELIMINAR ==================
   abrirModalEliminar(item: InventarioResponseDTO) {
     this.inventarioAEliminar = item;
     this.mostrarModalEliminar = true;
   }
 
   cerrarModalEliminar() {
-    if (this.eliminando) return;
     this.mostrarModalEliminar = false;
     this.inventarioAEliminar = null;
   }
 
   eliminarInventario(id: number) {
-    this.inventarioService.eliminarInventario(id).subscribe({
-      next: () => {
-        this.cargarInventario();
-        this.cerrarModalEliminar();
-      },
-      error: err => console.error(err)
+    this.inventarioService.eliminarInventario(id).subscribe(() => {
+      this.cargarInventario();
+      this.cerrarModalEliminar();
     });
   }
 
@@ -252,44 +259,197 @@ export class GInventarioComponent implements OnInit {
   eliminarInsumo() {
     if (!this.insumoAEliminar) return;
 
-    this.insumoService.eliminarInsumo(this.insumoAEliminar.id).subscribe({
-      next: () => {
-        this.cargarInsumos();
-        this.cargarInventario();
-        this.cerrarModalEliminarInsumo();
-      },
-      error: err => console.error(err)
+    this.insumoService.eliminarInsumo(this.insumoAEliminar.id).subscribe(() => {
+      this.cargarInsumos();
+      this.cargarInventario();
+      this.cerrarModalEliminarInsumo();
     });
   }
 
-  cerrarModalInsumo() {
-  this.modalInsumo = false;
-  this.cancelarFormularioInsumo();
-}
+  cerrarModalLotes(){
+    this.mostrarModalLotes = false;
+    this.filtroUbicacion = '';
+    this.filtroFecha = '';
+  }
 
+  // ================== FILTROS ==================
 get inventarioFiltrado() {
-  const texto = this.busquedaInventario.toLowerCase().trim();
+  const t = this.busquedaInventario.toLowerCase().trim();
 
-  if (!texto) return this.inventario;
+  if (!t) return this.inventario;
 
-  return this.inventario.filter(item =>
-    item.id.toString().includes(texto) ||
-    item.insumoNombre.toLowerCase().includes(texto) ||
-    item.unidad.toLowerCase().includes(texto) ||
-    item.stock.toString().includes(texto)
-  );
+  return this.inventario.filter(i => {
+
+    return (
+      i.insumoNombre?.toLowerCase().includes(t) ||
+      i.unidad?.toLowerCase().includes(t) ||
+
+      i.insumoId?.toString().includes(t) ||
+      i.stockTotal?.toString().includes(t) ||
+      i.stockCocina?.toString().includes(t) ||
+      i.stockBodega?.toString().includes(t)
+    );
+
+  });
+}
+  get insumosFiltrados(){
+    const t = this.busquedaInsumo.toLowerCase().trim();
+    if(!t) return this.insumos;
+
+    return this.insumos.filter(i =>
+      i.nombre.toLowerCase().includes(t)
+    );
+  }
+
+  abrirIngreso(item: any){
+  this.insumoSeleccionado = item;
+  this.cantidad = null;
+  this.fecha = '';
+  this.mostrarIngreso = true;
 }
 
-get insumosFiltrados() {
-  const texto = this.busquedaInsumo.toLowerCase().trim();
+ingresar(){
 
-  if (!texto) return this.insumos;
+  if(this.cantidad === null || this.cantidad <= 0 || !this.fecha){
+    return;
+  }
 
-  return this.insumos.filter(insumo =>
-    insumo.id.toString().includes(texto) ||
-    insumo.nombre.toLowerCase().includes(texto) ||
-    insumo.unidad.toLowerCase().includes(texto)
-  );
+  const fecha = new Date(this.fecha);
+  fecha.setHours(23,59,0,0);
+
+  const fechaFormateada = fecha.toISOString().slice(0,19);
+
+  this.inventarioService
+    .ingresarStock(
+      this.insumoSeleccionado.insumoId,
+      this.cantidad,
+      fechaFormateada
+    )
+    .subscribe(() => {
+      this.mostrarIngreso = false;
+      this.cargarInventario();
+    });
+}
+
+abrirSurtir(item:any){
+  this.insumoSeleccionado = item;
+  this.cantidad = null;
+  this.mostrarSurtir = true;
+}
+
+surtir(){
+
+  if(this.cantidad === null || this.cantidad <= 0){
+    return;
+  }
+
+  this.inventarioService
+    .surtirCocina(
+      this.insumoSeleccionado.insumoId,
+      this.cantidad
+    )
+    .subscribe(() => {
+      this.mostrarSurtir = false;
+      this.cargarInventario();
+    });
+}
+
+verLotes(item:any){
+  this.insumoSeleccionado = item;
+
+  this.inventarioService.obtenerLotes(item.insumoId)
+    .subscribe(data => {
+      this.lotes = data;
+      this.mostrarLotes = true;
+    });
+}
+
+get lotesFiltrados() {
+  return this.lotes.filter(l => {
+
+    const cumpleUbicacion = this.filtroUbicacion
+      ? l.ubicacion === this.filtroUbicacion
+      : true;
+
+    const cumpleFecha = this.filtroFecha
+      ? l.fechaVencimiento.startsWith(this.filtroFecha)
+      : true;
+
+    return cumpleUbicacion && cumpleFecha;
+  });
+}
+
+cerrarLotes() {
+  this.mostrarLotes = false;
+  this.filtroUbicacion = '';
+  this.filtroFecha = '';
+}
+
+  abrirIngresoGlobal(){
+    this.cantidad = null;
+    this.fecha = '';
+    this.insumoIdSeleccionado = null;
+    this.mostrarIngresoGlobal = true;
+  }
+
+
+ingresarGlobal(){
+
+  if(!this.insumoIdSeleccionado || this.cantidad === null || this.cantidad <= 0 || !this.fecha){
+    return;
+  }
+
+  const fecha = new Date(this.fecha);
+  fecha.setHours(23,59,0,0);
+
+  const fechaFormateada = fecha.toISOString().slice(0,19);
+
+  this.inventarioService
+    .ingresarStock(
+      this.insumoIdSeleccionado,
+      this.cantidad,
+      fechaFormateada
+    )
+    .subscribe(() => {
+      this.mostrarIngresoGlobal = false;
+      this.cargarInventario();
+    });
+}
+
+bloquearNegativos(event: KeyboardEvent) {
+  if (event.key === '-' || event.key === 'e') {
+    event.preventDefault();
+  }
+}
+
+private unirInventarioConInsumos(data: InventarioBodegueroDTO[]) {
+  return data.map(item => {
+
+    const insumo = this.insumos.find(i => i.id === item.insumoId);
+
+    return {
+      ...item,
+      insumo: insumo 
+    };
+
+  });
+}
+
+cargarInsumosYLuegoInventario() {
+  this.insumoService.obtenerInsumos().subscribe({
+    next: insumos => {
+      this.insumos = insumos;
+
+      this.inventarioService.obtenerVistaBodeguero().subscribe({
+        next: data => {
+          this.inventario = this.unirInventarioConInsumos(data);
+        },
+        error: err => console.error(err)
+      });
+
+    },
+    error: err => console.error(err)
+  });
 }
 
 }

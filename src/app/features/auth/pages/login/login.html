@@ -21,6 +21,16 @@
         <label>Correo electrónico</label>
       </div>
 
+          <div class="error"
+      *ngIf="(form.get('email')?.touched || formEnviado) 
+              && form.get('email')?.invalid">
+
+      <span *ngIf="form.get('email')?.errors?.['email']">
+        El formato del correo no es válido
+      </span>
+
+    </div>
+
     <div class="password-container">
 
       <div class="input-group">
@@ -57,6 +67,19 @@
         Ingresar
       </button>
     </form>
+
+    <div *ngIf="errorGeneral"
+     class="mt-4 p-4 rounded-lg border border-red-300 bg-red-50 text-red-700 text-sm flex items-start gap-3">
+
+  <span class="material-symbols-outlined text-red-600">
+    warning
+  </span>
+
+  <span>
+    {{ errorGeneral }}
+  </span>
+
+</div>
 
     <div *ngIf="error"
         class="mt-4 p-4 rounded-lg border border-red-300 bg-red-50 text-red-700 text-sm flex items-start gap-3 animate-fadeIn">

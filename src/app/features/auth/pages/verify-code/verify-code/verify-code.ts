@@ -121,6 +121,10 @@ export class VerifyCode implements OnInit, OnDestroy {
             case 'COCINERO':
               this.router.navigate(['/dashboard/cocinero']);
               break;
+              
+            case 'BODEGUERO':
+              this.router.navigate(['/dashboard/bodeguero']);
+              break;
           }
         },
         error: () => {

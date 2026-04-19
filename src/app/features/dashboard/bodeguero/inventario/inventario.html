@@ -1,0 +1,286 @@
+<div class="mb-6">
+
+  <!-- FILA 1 -->
+  <div class="flex justify-between items-center mb-4">
+    <h1 class="text-2xl font-bold">Inventario Bodeguero</h1>
+
+    <button
+      (click)="abrirIngresoGlobal()"
+      class="bg-green-600 text-white px-4 py-2 rounded-lg shadow">
+      + Ingresar lote
+    </button>
+  </div>
+
+  <!-- FILA 2 (BÚSQUEDA) -->
+  <div class="relative max-w-md">
+
+    <input
+      type="text"
+      placeholder="Buscar por insumo, ID o stock"
+      [(ngModel)]="busquedaInventario"
+      class="w-full border rounded-lg px-4 py-2 pl-10 focus:ring-2 focus:ring-primary outline-none"
+    />
+
+    <span class="material-symbols-outlined absolute left-3 top-2.5 text-gray-400">
+      search
+    </span>
+
+  </div>
+
+</div>
+
+<table class="w-full bg-white shadow rounded-lg overflow-hidden">
+  <thead class="bg-gray-100">
+    <tr>
+      <th class="p-3 text-left">Insumo</th>
+      <th class="p-3">Total</th>
+      <th class="p-3">Cocina</th>
+      <th class="p-3">Bodega</th>
+      <th class="p-3">Acciones</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr *ngFor="let i of inventarioFiltrado" class="border-t">
+
+      <td class="p-3 font-semibold">{{ i.insumoNombre }}</td>
+
+      <td class="text-center">{{ i.stockTotal }}</td>
+      <td class="text-center text-green-600">{{ i.stockCocina }}</td>
+      <td class="text-center text-blue-600">{{ i.stockBodega }}</td>
+
+      <td class="p-3 flex gap-2 justify-center">
+        <button (click)="abrirIngreso(i)" class="bg-green-500 text-white px-3 py-1 rounded">
+          + Ingresar
+        </button>
+
+        <button (click)="abrirSurtir(i)" class="bg-blue-500 text-white px-3 py-1 rounded">
+          Surtir
+        </button>
+
+        <button (click)="verLotes(i)" class="bg-gray-700 text-white px-3 py-1 rounded">
+          Ver lotes
+        </button>
+      </td>
+
+    </tr>
+  </tbody>
+</table>
+
+<!-- INGRESAR -->
+<div *ngIf="mostrarIngreso" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+
+  <div class="bg-white p-6 rounded-xl shadow-lg w-96">
+
+    <h2 class="text-xl font-bold mb-4">Ingresar lote</h2>
+
+    <div class="mb-3">
+      <label class="block text-sm font-medium text-gray-700 mb-1">
+        Cantidad
+      </label>
+      <input
+        type="number"
+        [(ngModel)]="cantidad"
+        min="1"
+        step="1"
+        (keydown)="bloquearNegativos($event)"
+        class="w-full border p-2 rounded"
+        placeholder="Ingrese la cantidad">
+    </div>
+
+    <div *ngIf="cantidad !== null && cantidad <= 0" class="text-red-500 text-sm mb-2">
+      La cantidad debe ser mayor a 0
+    </div>
+
+    <div class="mb-3">
+      <label class="block text-sm font-medium text-gray-700 mb-1">
+        Fecha de vencimiento
+      </label>
+      <input
+        type="date"
+        [(ngModel)]="fecha"
+        [min]="fechaMin"
+        class="w-full border p-2 rounded">
+    </div>
+
+    <div class="flex justify-end gap-2">
+      <button (click)="mostrarIngreso=false" class="px-4 py-2 bg-gray-300 rounded">
+        Cancelar
+      </button>
+
+      <button
+        (click)="ingresar()"
+        [disabled]="cantidad === null || cantidad <= 0 || !fecha"
+        class="px-4 py-2 bg-green-600 text-white rounded disabled:opacity-50">
+        Guardar
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- SURTIR -->
+<div *ngIf="mostrarSurtir" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+
+  <div class="bg-white p-6 rounded-xl shadow-lg w-96">
+
+    <h2 class="text-xl font-bold mb-4">Surtir cocina</h2>
+
+    <div class="mb-3">
+      <label class="block text-sm font-medium text-gray-700 mb-1">
+        Cantidad
+      </label>
+      <input
+        type="number"
+        [(ngModel)]="cantidad"
+        min="1"
+        step="1"
+        (keydown)="bloquearNegativos($event)"
+        class="w-full border p-2 rounded"
+        placeholder="Ingrese la cantidad">
+    </div>
+
+    <div *ngIf="cantidad !== null && cantidad <= 0" class="text-red-500 text-sm mb-2">
+      La cantidad debe ser mayor a 0
+    </div>
+
+    <div class="flex justify-end gap-2">
+      <button (click)="mostrarSurtir=false" class="px-4 py-2 bg-gray-300 rounded">
+        Cancelar
+      </button>
+
+      <button
+        (click)="surtir()"
+        [disabled]="cantidad === null || cantidad <= 0"
+        class="px-4 py-2 bg-blue-600 text-white rounded">
+        Surtir
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- LOTES -->
+<div *ngIf="mostrarLotes" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+
+  <div class="bg-white p-6 rounded-xl shadow-lg w-[750px]">
+
+    <h2 class="text-xl font-bold mb-4">Lotes</h2>
+
+    <!-- FILTROS BIEN ALINEADOS -->
+    <div class="flex gap-4 mb-4 items-end">
+
+      <div class="flex flex-col w-40">
+        <label class="text-sm text-gray-600 mb-1">Ubicación</label>
+        <select [(ngModel)]="filtroUbicacion" class="border p-2 rounded w-full">
+          <option value="">Todas</option>
+          <option value="COCINA">Cocina</option>
+          <option value="BODEGA">Bodega</option>
+        </select>
+      </div>
+
+      <div class="flex flex-col">
+        <label class="text-sm text-gray-600 mb-1">Fecha de vencimiento</label>
+        <input
+          type="date"
+          [(ngModel)]="filtroFecha"
+          class="border p-2 rounded w-52"
+        />
+      </div>
+
+    </div>
+
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="bg-gray-100">
+          <th class="p-2">Cant</th>
+          <th class="p-2">Disponible</th>
+          <th class="p-2">Ubicación</th>
+          <th class="p-2">Ingreso</th>
+          <th class="p-2">Vence</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let l of lotesFiltrados" class="border-t text-center">
+          <td class="p-2">{{ l.cantidadInicial }}</td>
+          <td class="p-2">{{ l.cantidadDisponible }}</td>
+          <td class="p-2">{{ l.ubicacion }}</td>
+          <td class="p-2">{{ l.fechaIngreso | date:'short' }}</td>
+          <td class="p-2">{{ l.fechaVencimiento | date:'short' }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="flex justify-end mt-4">
+      <button (click)="cerrarLotes()" class="px-4 py-2 bg-gray-600 text-white rounded">
+        Cerrar
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- INGRESO GLOBAL -->
+<div *ngIf="mostrarIngresoGlobal" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+
+  <div class="bg-white p-6 rounded-xl shadow-lg w-96">
+
+    <h2 class="text-xl font-bold mb-4">Nuevo lote</h2>
+
+    <div class="mb-3">
+      <label class="block text-sm font-medium text-gray-700 mb-1">
+        Insumo
+      </label>
+      <select [(ngModel)]="insumoIdSeleccionado" class="w-full border p-2 rounded">
+        <option value=""></option>
+        <option *ngFor="let i of insumos" [value]="i.id">
+          {{ i.nombre }}
+        </option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label class="block text-sm font-medium text-gray-700 mb-1">
+        Cantidad
+      </label>
+      <input
+        type="number"
+        [(ngModel)]="cantidad"
+        min="1"
+        step="1"
+        (keydown)="bloquearNegativos($event)"
+        class="w-full border p-2 rounded"
+        placeholder="Ingrese la cantidad">
+    </div>
+
+    <div *ngIf="cantidad !== null && cantidad <= 0" class="text-red-500 text-sm mb-2">
+      La cantidad debe ser mayor a 0
+    </div>
+
+    <div class="mb-3">
+      <label class="block text-sm font-medium text-gray-700 mb-1">
+        Fecha de vencimiento
+      </label>
+      <input
+        type="date"
+        [(ngModel)]="fecha"
+        [min]="fechaMin"
+        class="w-full border p-2 rounded">
+    </div>
+
+    <div class="flex justify-end gap-2">
+      <button (click)="mostrarIngresoGlobal=false" class="px-4 py-2 bg-gray-300 rounded">
+        Cancelar
+      </button>
+
+      <button
+        (click)="ingresarGlobal()"
+        [disabled]="cantidad === null || cantidad <= 0 || !fecha || !insumoIdSeleccionado"
+        class="px-4 py-2 bg-green-600 text-white rounded disabled:opacity-50">
+        Guardar
+      </button>
+    </div>
+
+  </div>
+</div>

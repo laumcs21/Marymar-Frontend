@@ -1,0 +1,45 @@
+.input-group {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.input-group input,
+.input-group select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  font-size: 14px;
+  background: white;
+}
+
+.input-group label {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  color: #999;
+  font-size: 14px;
+  transition: 0.2s ease all;
+  pointer-events: none;
+  background: white;
+  padding: 0 4px;
+  z-index: 10;
+}
+
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label,
+.input-group select:focus + label,
+.input-group select:not([value=""]) + label {
+  top: -8px;
+  font-size: 12px;
+  color: #000000;
+}
+
+.input-group.active label,
+.input-group input:focus + label,
+.input-group select:focus + label {
+  top: -8px;
+  font-size: 12px;
+  color: #000;
+}

@@ -3,9 +3,11 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
+  InventarioBodegueroDTO,
   InventarioCreateDTO,
   InventarioResponseDTO,
-  InventarioUpdateDTO
+  InventarioUpdateDTO,
+  LoteDTO
 } from '../models/inventario.model';
 
 @Injectable({
@@ -37,6 +39,41 @@ export class InventarioService {
 
   eliminarInventario(id:number){
   return this.http.delete(`${this.apiUrl}/${id}`);
+}
+
+ingresarStock(insumoId: number, cantidad: number, fecha: string) {
+  return this.http.post(
+    `${this.apiUrl}/${insumoId}/ingresar`,
+    null,
+    {
+      params: {
+        cantidad,
+        fechaVencimiento: fecha
+      }
+    }
+  );
+}
+
+surtirCocina(insumoId: number, cantidad: number) {
+  return this.http.post(
+    `${this.apiUrl}/${insumoId}/surtir`,
+    null,
+    {
+      params: { cantidad }
+    }
+  );
+}
+
+obtenerVistaBodeguero(): Observable<InventarioBodegueroDTO[]> {
+  return this.http.get<InventarioBodegueroDTO[]>(`${this.apiUrl}/bodeguero`);
+}
+
+obtenerLotes(insumoId: number): Observable<LoteDTO[]> {
+  return this.http.get<LoteDTO[]>(`${this.apiUrl}/${insumoId}/lotes`);
+}
+
+obtenerNotificaciones() {
+  return this.http.get<any[]>(`${environment.apiUrl}/notificaciones`);
 }
 
 }

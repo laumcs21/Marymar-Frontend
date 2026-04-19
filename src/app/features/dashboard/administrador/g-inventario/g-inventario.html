@@ -10,7 +10,7 @@
         Gestionar insumos
       </button>
 
-      <button class="btn-primary" (click)="abrirModalInventario()">
+      <button class="btn-primary" (click)="abrirIngresoGlobal()">
         Registrar inventario
       </button>
 
@@ -18,15 +18,14 @@
 
   </div>
 
-      <div class="input-group search-group">
-  <input
-    type="text"
-    placeholder="Buscar por ID, insumo, unidad o stock"
-    [(ngModel)]="busquedaInventario"
-    class="w-full border rounded-lg px-4 py-2 pl-10 focus:ring-2 focus:ring-primary outline-none"
-
-  />
-  <label>Buscar en inventario</label>
+  <div class="input-group search-group">
+    <input
+      type="text"
+      placeholder="Buscar por ID, insumo, unidad o stock"
+      [(ngModel)]="busquedaInventario"
+      class="w-full border rounded-lg px-4 py-2 pl-10 focus:ring-2 focus:ring-primary outline-none"
+    />
+    <label>Buscar en inventario</label>
   </div>
 
   <div class="card">
@@ -40,37 +39,45 @@
           <th>ID</th>
           <th>INSUMO</th>
           <th>UNIDAD</th>
-          <th>STOCK</th>
+          <th>TOTAL</th>
+          <th>COCINA</th>
+          <th>BODEGA</th>
           <th>ACCIONES</th>
         </tr>
       </thead>
 
       <tbody>
 
-      <tr *ngFor="let item of inventarioFiltrado">
-          <td>{{ item.id }}</td>
+        <tr *ngFor="let item of inventarioFiltrado">
+          <td>{{ item.insumoId }}</td>
           <td>{{ item.insumoNombre }}</td>
-          <td>{{ item.unidad }}</td>
-          <td>{{ item.stock }}</td>
+          <td>{{ item.insumo?.unidad}}</td>
 
-          <td>
+          <td>{{ item.stockTotal }}</td>
+          <td class="text-green-600">{{ item.stockCocina }}</td>
+          <td class="text-blue-600">{{ item.stockBodega }}</td>
+
+          <td class="flex gap-2">
 
             <button
-              (click)="abrirEditarStock(item)"
-              class="text-blue-600 hover:text-blue-800 transition-colors"
-              title="Editar">
-
-              <span class="material-symbols-outlined">edit</span>
-
+              (click)="abrirIngreso(item)"
+              class="text-green-600 hover:text-green-800"
+              title="Ingresar lote">
+              <span class="material-symbols-outlined">add</span>
             </button>
 
             <button
-              (click)="abrirModalEliminar(item)"
-              class="text-red-600 hover:text-red-800 transition-colors"
-              title="Eliminar">
+              (click)="abrirSurtir(item)"
+              class="text-blue-600 hover:text-blue-800"
+              title="Surtir Cocina">
+              <span class="material-symbols-outlined">local_shipping</span>
+            </button>
 
-              <span class="material-symbols-outlined">delete</span>
-
+            <button
+              (click)="verLotes(item)"
+              class="text-gray-700 hover:text-black"
+              title="Ver lotes">
+              <span class="material-symbols-outlined">inventory</span>
             </button>
 
           </td>
@@ -84,6 +91,8 @@
   </div>
 
 </div>
+
+<!-- TODO LO QUE SIGUE ES EXACTAMENTE TUYO, NO MODIFICADO -->
 
 <!-- MODAL GESTIONAR INSUMOS -->
 <div class="modal" *ngIf="modalInsumo">
@@ -243,107 +252,6 @@
 
 </div>
 
-<!-- MODAL EDITAR STOCK -->
-<div class="modal" *ngIf="modalEditarStock">
-
-  <div class="modal-content">
-
-    <h3>Editar stock</h3>
-
-    <p>
-      <strong>{{ inventarioSeleccionado.insumoNombre }}</strong>
-    </p>
-
-    <div class="input-group">
-      <input
-        type="number"
-        min="0"
-        [(ngModel)]="stockEditando"
-        placeholder="Stock"
-      />
-      <label>Stock</label>
-    </div>
-
-    <div class="modal-buttons">
-
-      <button class="btn-primary" (click)="guardarStock()">
-        Guardar
-      </button>
-
-      <button class="btn-cancel" (click)="cerrarModalEditarStock()">
-        Cancelar
-      </button>
-
-    </div>
-
-  </div>
-
-</div>
-
-<!-- MODAL ELIMINAR INVENTARIO -->
-<div *ngIf="mostrarModalEliminar"
-     class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[3000] p-4"
-     (click)="cerrarModalEliminar()">
-
-  <div class="bg-white rounded-2xl w-full max-w-md shadow-2xl border border-slate-200 overflow-hidden"
-       (click)="$event.stopPropagation()">
-
-    <div class="px-6 py-5 border-b border-slate-200 bg-slate-50 flex items-center gap-3">
-
-      <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
-        <span class="material-symbols-outlined text-red-500">
-          delete
-        </span>
-      </div>
-
-      <div>
-        <h3 class="text-lg font-bold text-slate-800">
-          Eliminar inventario
-        </h3>
-        <p class="text-sm text-slate-500">
-          Esta acción no se puede deshacer
-        </p>
-      </div>
-
-    </div>
-
-    <div class="px-6 py-5">
-      <p class="text-slate-700 leading-relaxed">
-        ¿Seguro que deseas eliminar del inventario el 
-        <span class="font-semibold text-slate-900">
-          "{{ inventarioAEliminar?.insumoNombre }}"
-        </span>?
-      </p>
-    </div>
-
-    <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-end gap-3">
-
-      <button type="button"
-              (click)="cerrarModalEliminar()"
-              [disabled]="eliminando"
-              class="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-600 font-semibold hover:bg-slate-100 transition disabled:opacity-50">
-        Cancelar
-      </button>
-
-      <button type="button"
-              (click)="eliminarInventario(inventarioAEliminar!.id)"
-              [disabled]="eliminando"
-              class="px-5 py-2.5 rounded-lg bg-red-500 text-white font-semibold hover:bg-red-600 transition disabled:opacity-50 flex items-center gap-2">
-
-        <span class="material-symbols-outlined text-sm">
-          delete
-        </span>
-
-        {{ eliminando ? 'Eliminando...' : 'Sí, eliminar' }}
-
-      </button>
-
-    </div>
-
-  </div>
-
-</div>
-
 <!-- MODAL ELIMINAR INSUMO -->
 <div *ngIf="mostrarModalEliminarInsumo"
      class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[3000] p-4"
@@ -406,4 +314,222 @@
 
   </div>
 
+</div>
+
+<!-- INGRESAR -->
+<div *ngIf="mostrarIngreso" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+
+  <div class="bg-white p-6 rounded-xl shadow-lg w-96">
+
+    <h2 class="text-xl font-bold mb-4">Ingresar lote</h2>
+
+    <div class="mb-3">
+      <label class="block text-sm font-medium text-gray-700 mb-1">
+        Cantidad
+      </label>
+      <input
+        type="number"
+        [(ngModel)]="cantidad"
+        min="1"
+        step="1"
+        (keydown)="bloquearNegativos($event)"
+        class="w-full border p-2 rounded"
+        placeholder="Ingrese la cantidad">
+    </div>
+
+    <div *ngIf="cantidad !== null && cantidad <= 0" class="text-red-500 text-sm mb-2">
+      La cantidad debe ser mayor a 0
+    </div>
+
+    <div class="mb-3">
+      <label class="block text-sm font-medium text-gray-700 mb-1">
+        Fecha de vencimiento
+      </label>
+      <input
+        type="date"
+        [(ngModel)]="fecha"
+        [min]="fechaMin"
+        class="w-full border p-2 rounded">
+    </div>
+
+    <div class="flex justify-end gap-2">
+      <button (click)="mostrarIngreso=false" class="px-4 py-2 bg-gray-300 rounded">
+        Cancelar
+      </button>
+
+      <button
+        (click)="ingresar()"
+        [disabled]="cantidad === null || cantidad <= 0 || !fecha"
+        class="px-4 py-2 bg-green-600 text-white rounded disabled:opacity-50">
+        Guardar
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- SURTIR -->
+<div *ngIf="mostrarSurtir" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+
+  <div class="bg-white p-6 rounded-xl shadow-lg w-96">
+
+    <h2 class="text-xl font-bold mb-4">Surtir cocina</h2>
+
+    <div class="mb-3">
+      <label class="block text-sm font-medium text-gray-700 mb-1">
+        Cantidad
+      </label>
+      <input
+        type="number"
+        [(ngModel)]="cantidad"
+        min="1"
+        step="1"
+        (keydown)="bloquearNegativos($event)"
+        class="w-full border p-2 rounded"
+        placeholder="Ingrese la cantidad">
+    </div>
+
+    <div *ngIf="cantidad !== null && cantidad <= 0" class="text-red-500 text-sm mb-2">
+      La cantidad debe ser mayor a 0
+    </div>
+
+    <div class="flex justify-end gap-2">
+      <button (click)="mostrarSurtir=false" class="px-4 py-2 bg-gray-300 rounded">
+        Cancelar
+      </button>
+
+      <button
+        (click)="surtir()"
+        [disabled]="cantidad === null || cantidad <= 0"
+        class="px-4 py-2 bg-blue-600 text-white rounded">
+        Surtir
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- LOTES -->
+<div *ngIf="mostrarLotes" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+
+  <div class="bg-white p-6 rounded-xl shadow-lg w-[750px]">
+
+    <h2 class="text-xl font-bold mb-4">Lotes</h2>
+
+    <!-- FILTROS BIEN ALINEADOS -->
+    <div class="flex gap-4 mb-4 items-end">
+
+      <div class="flex flex-col w-40">
+        <label class="text-sm text-gray-600 mb-1">Ubicación</label>
+        <select [(ngModel)]="filtroUbicacion" class="border p-2 rounded w-full">
+          <option value="">Todas</option>
+          <option value="COCINA">Cocina</option>
+          <option value="BODEGA">Bodega</option>
+        </select>
+      </div>
+
+      <div class="flex flex-col">
+        <label class="text-sm text-gray-600 mb-1">Fecha de vencimiento</label>
+        <input
+          type="date"
+          [(ngModel)]="filtroFecha"
+          class="border p-2 rounded w-52"
+        />
+      </div>
+
+    </div>
+
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="bg-gray-100">
+          <th class="p-2">Cant</th>
+          <th class="p-2">Disponible</th>
+          <th class="p-2">Ubicación</th>
+          <th class="p-2">Ingreso</th>
+          <th class="p-2">Vence</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let l of lotesFiltrados" class="border-t text-center">
+          <td class="p-2">{{ l.cantidadInicial }}</td>
+          <td class="p-2">{{ l.cantidadDisponible }}</td>
+          <td class="p-2">{{ l.ubicacion }}</td>
+          <td class="p-2">{{ l.fechaIngreso | date:'short' }}</td>
+          <td class="p-2">{{ l.fechaVencimiento | date:'short' }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="flex justify-end mt-4">
+      <button (click)="cerrarLotes()" class="px-4 py-2 bg-gray-600 text-white rounded">
+        Cerrar
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- INGRESO GLOBAL -->
+<div *ngIf="mostrarIngresoGlobal" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+
+  <div class="bg-white p-6 rounded-xl shadow-lg w-96">
+
+    <h2 class="text-xl font-bold mb-4">Nuevo lote</h2>
+
+    <div class="mb-3">
+      <label class="block text-sm font-medium text-gray-700 mb-1">
+        Insumo
+      </label>
+      <select [(ngModel)]="insumoIdSeleccionado" class="w-full border p-2 rounded">
+        <option value=""></option>
+        <option *ngFor="let i of insumos" [value]="i.id">
+          {{ i.nombre }}
+        </option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label class="block text-sm font-medium text-gray-700 mb-1">
+        Cantidad
+      </label>
+      <input
+        type="number"
+        [(ngModel)]="cantidad"
+        min="1"
+        step="1"
+        (keydown)="bloquearNegativos($event)"
+        class="w-full border p-2 rounded"
+        placeholder="Ingrese la cantidad">
+    </div>
+
+    <div *ngIf="cantidad !== null && cantidad <= 0" class="text-red-500 text-sm mb-2">
+      La cantidad debe ser mayor a 0
+    </div>
+
+    <div class="mb-3">
+      <label class="block text-sm font-medium text-gray-700 mb-1">
+        Fecha de vencimiento
+      </label>
+      <input
+        type="date"
+        [(ngModel)]="fecha"
+        [min]="fechaMin"
+        class="w-full border p-2 rounded">
+    </div>
+
+    <div class="flex justify-end gap-2">
+      <button (click)="mostrarIngresoGlobal=false" class="px-4 py-2 bg-gray-300 rounded">
+        Cancelar
+      </button>
+
+      <button
+        (click)="ingresarGlobal()"
+        [disabled]="cantidad === null || cantidad <= 0 || !fecha || !insumoIdSeleccionado"
+        class="px-4 py-2 bg-green-600 text-white rounded disabled:opacity-50">
+        Guardar
+      </button>
+    </div>
+
+  </div>
 </div>

@@ -1,0 +1,224 @@
+<div class="max-w-4xl mx-auto">
+
+  <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-lg border border-primary/10 overflow-hidden">
+
+    <!-- HEADER -->
+    <div class="px-8 py-6 border-b border-primary/10 bg-white dark:bg-slate-900">
+      <h2 class="text-2xl font-bold text-primary">Mi Perfil</h2>
+      <p class="text-sm text-slate-500 mt-1">
+        Información personal del bodeguero
+      </p>
+    </div>
+
+    <div class="p-8">
+
+      <!-- MODO VISTA -->
+      <div *ngIf="!modoEdicion" class="space-y-8">
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+          <div class="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4 border border-primary/5">
+            <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-2">Identificación</p>
+            <p class="text-sm font-medium text-slate-800 dark:text-slate-100">
+              {{ textoSiVacio(usuario.numeroIdentificacion) }}
+            </p>
+          </div>
+
+          <div class="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4 border border-primary/5">
+            <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-2">Nombre</p>
+            <p class="text-sm font-medium text-slate-800 dark:text-slate-100">
+              {{ textoSiVacio(usuario.nombre) }}
+            </p>
+          </div>
+
+          <div class="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4 border border-primary/5">
+            <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-2">Correo</p>
+            <p class="text-sm font-medium text-slate-800 dark:text-slate-100">
+              {{ textoSiVacio(usuario.email) }}
+            </p>
+          </div>
+          
+
+          <div class="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4 border border-primary/5">
+            <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-2">Teléfono</p>
+            <p class="text-sm font-medium text-slate-800 dark:text-slate-100">
+              {{ textoSiVacio(usuario.telefono) }}
+            </p>
+          </div>
+
+          <div class="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4 border border-primary/5">
+            <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-2">Fecha de nacimiento</p>
+            <p class="text-sm font-medium text-slate-800 dark:text-slate-100">
+              {{ formatearFecha(usuario.fechaNacimiento) }}
+            </p>
+          </div>
+
+          <div class="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4 border border-primary/5">
+            <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-2">Rol</p>
+            <p class="text-sm font-medium text-slate-800 dark:text-slate-100">
+              {{ textoSiVacio(usuario.rol) }}
+            </p>
+          </div>
+
+          <div class="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4 border border-primary/5">
+            <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-2">Salario</p>
+            <p class="text-sm font-medium text-slate-800 dark:text-slate-100">
+              {{ usuario.salario != null ? ('$ ' + usuario.salario) : 'No registrado' }}
+            </p>
+          </div>
+
+          <div class="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4 border border-primary/5">
+            <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-2">Estado</p>
+            <p class="text-sm font-medium"
+               [ngClass]="usuario.activo ? 'text-green-600' : 'text-red-600'">
+              {{ usuario.activo ? 'Activo' : 'Inactivo' }}
+            </p>
+          </div>
+
+          <div class="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4 border border-primary/5 md:col-span-2">
+            <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-2">Fecha de creación</p>
+            <p class="text-sm font-medium text-slate-800 dark:text-slate-100">
+              {{ usuario.createdAt ? formatearFecha(usuario.createdAt) : 'No registrada' }}
+            </p>
+          </div>
+
+        </div>
+
+        <div *ngIf="mensaje"
+             class="bg-green-100 text-green-700 px-4 py-3 rounded-xl text-sm font-medium">
+          {{ mensaje }}
+        </div>
+
+        <div class="flex justify-end">
+          <button
+            (click)="activarEdicion()"
+            class="px-6 py-3 rounded-xl bg-primary text-white font-semibold hover:opacity-90 transition">
+            Editar
+          </button>
+        </div>
+
+      </div>
+
+      <!-- MODO EDICIÓN -->
+      <div *ngIf="modoEdicion" class="space-y-6">
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+          <!-- NOMBRE -->
+          <div class="md:col-span-2">
+            <label class="block text-sm font-semibold text-slate-600 mb-2">Nombre</label>
+            <input
+              [(ngModel)]="usuario.nombre"
+              class="w-full border border-primary/10 rounded-xl p-3 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary"
+              placeholder="Nombre completo" />
+          </div>
+
+          <!-- EMAIL -->
+          <div class="md:col-span-2">
+            <label class="block text-sm font-semibold text-slate-600 mb-2">Correo</label>
+            <input
+              [(ngModel)]="usuario.email"
+              class="w-full border border-primary/10 rounded-xl p-3 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary"
+              placeholder="Correo" />
+          </div>
+
+          <div class="md:col-span-2">
+            <label class="block text-sm font-semibold text-slate-600 mb-2">
+              Número de identificación
+            </label>
+
+            <input
+              [(ngModel)]="usuario.numeroIdentificacion"
+              class="w-full border border-primary/10 rounded-xl p-3 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary"
+              placeholder="Número de identificación" />
+          </div>
+
+          <!-- TELÉFONO -->
+          <div class="md:col-span-2">
+            <label class="block text-sm font-semibold text-slate-600 mb-2">Teléfono</label>
+            <input
+              [(ngModel)]="usuario.telefono"
+              class="w-full border border-primary/10 rounded-xl p-3 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary"
+              placeholder="Teléfono" />
+          </div>
+
+          <div class="md:col-span-2">
+            <label class="block text-sm font-semibold text-slate-600 mb-2">
+              Fecha de nacimiento
+            </label>
+
+            <input
+              type="date"
+              [(ngModel)]="usuario.fechaNacimiento"
+              class="w-full border border-primary/10 rounded-xl p-3 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary" />
+          </div>
+
+          <!-- CONTRASEÑA -->
+          <div class="md:col-span-2 relative">
+            <label class="block text-sm font-semibold text-slate-600 mb-2">Nueva contraseña</label>
+
+            <input
+              [type]="tipoInputPassword"
+              [(ngModel)]="usuario.contrasena"
+              class="w-full border border-primary/10 rounded-xl p-3 pr-12 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary"
+              placeholder="Opcional"
+              (focus)="activarPassword()"
+              (blur)="ocultarReglasConDelay()" />
+
+            <span
+              (mousedown)="$event.preventDefault()"
+              (click)="togglePassword()"
+              class="absolute right-4 top-[46px] cursor-pointer text-slate-500">
+              <span class="material-symbols-outlined">
+                {{ mostrarPassword ? 'visibility_off' : 'visibility' }}
+              </span>
+            </span>
+          </div>
+
+        </div>
+
+        <!-- REGLAS CONTRASEÑA -->
+        <div *ngIf="mostrarReglasPassword"
+             class="bg-slate-50 dark:bg-slate-800/50 border border-primary/5 rounded-xl p-4 text-sm text-slate-600">
+          <p class="font-semibold mb-2">La contraseña debe contener:</p>
+          <p>• Mínimo 6 caracteres</p>
+          <p>• Una letra mayúscula</p>
+          <p>• Una letra minúscula</p>
+          <p>• Un número</p>
+          <p>• Un símbolo</p>
+        </div>
+
+        <!-- MENSAJES -->
+        <div *ngIf="mensaje"
+             class="bg-green-100 text-green-700 px-4 py-3 rounded-xl text-sm font-medium">
+          {{ mensaje }}
+        </div>
+
+        <div *ngIf="error"
+             class="bg-red-100 text-red-700 px-4 py-3 rounded-xl text-sm font-medium">
+          {{ error }}
+        </div>
+
+        <!-- BOTONES -->
+        <div class="flex gap-4 justify-end">
+          <button
+            (click)="volverPerfil()"
+            class="px-6 py-3 rounded-xl border border-primary/10 text-slate-700 font-semibold hover:bg-slate-50 transition">
+            Volver
+          </button>
+
+          <button
+            (click)="guardar()"
+            [disabled]="cargando"
+            class="px-6 py-3 rounded-xl bg-primary text-white font-semibold hover:opacity-90 transition disabled:opacity-50">
+
+            <span *ngIf="!cargando">Guardar</span>
+            <span *ngIf="cargando">Guardando...</span>
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>

@@ -12,7 +12,7 @@
           Admin Panel
         </p>
       </div>
-    </div>
+      </div>
 
     <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
 
@@ -63,7 +63,7 @@
 
       </a>
 
-            <a
+      <a
         routerLink="/dashboard/administrador/g-mesas"
         routerLinkActive="sidebar-item-active"
         class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-primary/5 rounded-lg transition-colors cursor-pointer">
@@ -73,7 +73,7 @@
 
       </a>
 
-                  <a
+      <a
         routerLink="/dashboard/administrador/g-pedido"
         routerLinkActive="sidebar-item-active"
         class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-primary/5 rounded-lg transition-colors cursor-pointer">
@@ -83,7 +83,7 @@
 
       </a>
 
-                        <a
+      <a
         routerLink="/dashboard/administrador/g-auditoria"
         routerLinkActive="sidebar-item-active"
         class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-primary/5 rounded-lg transition-colors cursor-pointer">
@@ -106,17 +106,62 @@
         Panel Administrativo
       </h1>
 
-      <button
-        (click)="logout()"
-        class="flex items-center gap-2 bg-orange-500 text-white px-5 py-2 rounded-lg font-semibold hover:bg-orange-600 transition">
+      <!-- 🔥 SOLO AQUÍ CAMBIÉ: z-50 -->
+      <div class="flex items-center gap-4 relative z-50">
 
-        <span class="material-symbols-outlined text-[20px]">
-          logout
-        </span>
+        <!-- 🔔 CAMPANA -->
+        <button
+          (click)="mostrarPanelNotificaciones = !mostrarPanelNotificaciones"
+          class="p-2 rounded-full bg-white dark:bg-slate-800 border border-primary/10 text-primary relative">
 
-        Cerrar sesión
+          <span class="material-symbols-outlined">notifications</span>
 
-      </button>
+          <span
+            *ngIf="hayNotificaciones"
+            class="absolute top-1 right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white">
+          </span>
+        </button>
+
+        <!-- 🔐 LOGOUT -->
+        <button
+          (click)="logout()"
+          class="flex items-center gap-2 bg-orange-500 text-white px-5 py-2 rounded-lg font-semibold hover:bg-orange-600 transition">
+          <span class="material-symbols-outlined text-[20px]">logout</span>
+          Cerrar sesión
+        </button>
+
+        <!-- PANEL -->
+        <div
+          *ngIf="mostrarPanelNotificaciones"
+          class="notificaciones-panel"
+          (click)="$event.stopPropagation()">
+
+          <div class="header-notificaciones">
+            <h3>Notificaciones</h3>
+            <button class="btn-cerrar" (click)="cerrarNotificaciones()">✕</button>
+          </div>
+
+          <div
+            *ngFor="let n of notificaciones"
+            class="mb-3 p-3 rounded-lg border"
+            [ngClass]="{
+              'border-red-300 bg-red-50': n.tipo === 'BODEGA_BAJA',
+              'border-orange-300 bg-orange-50': n.tipo === 'COCINA_BAJA',
+              'border-yellow-300 bg-yellow-50': n.tipo === 'POR_VENCER'
+            }">
+
+            <div class="font-semibold mb-1">
+              {{ n.tipo }}
+            </div>
+
+            <div class="text-sm whitespace-pre-line">
+              {{ n.mensaje }}
+            </div>
+
+          </div>
+        </div>
+
+      </div>
 
     </header>
 
@@ -124,5 +169,10 @@
       <router-outlet></router-outlet>
     </div>
   </main>
+</div>
 
+<div
+  *ngIf="mostrarPanelNotificaciones"
+  class="overlay"
+  (click)="cerrarNotificaciones()">
 </div>
